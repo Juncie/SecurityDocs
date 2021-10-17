@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Image, Keyboard, KeyboardAvoidingView, TextInput, TouchableWithoutFeedback, View, StyleSheet, Button } from "react-native";
+import { Image, Keyboard, KeyboardAvoidingView, TextInput, TouchableWithoutFeedback, View, StyleSheet, Button, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
 
@@ -15,17 +15,10 @@ function Login({ navigation }) {
           <Image source={require("../assets/icon.png")} style={styles.image} />
           <TextInput onFocus={() => setEnableShift(true)} placeholder='Employee Id' keyboardType='number-pad' style={styles.input} />
           <View style={styles.btnContainer}>
-            <MaterialIcons
-              name='delete'
-              onPress={() => {
-                navigation.navigate("Forms");
-              }}
-              size={50}
-            />
             <Button
               title='Login'
               onPress={() => {
-                navigation.navigate("Home");
+                navigation.navigate('Home') ;
               }}
             />
           </View>

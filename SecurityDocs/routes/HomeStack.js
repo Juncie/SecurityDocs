@@ -9,10 +9,33 @@ import Forms from "../screens/Forms";
 
 const Stack = createNativeStackNavigator();
 
+const Users = [
+  {
+    33879: {
+      first: "Brandon",
+      last: "Mitchell",
+      id: 33879,
+      role: "admin",
+    },
+    12345: {
+      first: "Carlo",
+      last: "Mendez",
+      id: 12345,
+      role: "admin",
+    },
+    67890: {
+      first: "Andrew",
+      last: "Kernohan",
+      id: 67890,
+      role: "user",
+    },
+  },
+];
+
 const HomeStack = ({ navigation }) => {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator defaultScreenOptions={}>
         <Stack.Screen name='Login' component={Login} />
         <Stack.Screen name='Home' component={Home} />
         <Stack.Screen name='Forms' component={Forms} />
