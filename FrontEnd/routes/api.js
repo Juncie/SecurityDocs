@@ -10,8 +10,9 @@ const serverUrl =
 
 console.log(serverUrl);
 
-const actions = {
+const dbRoute = {
     newUser: async user => axios.post(`${serverUrl}/newUser`, user),
+    getUser: async user => axios.get(`${serverUrl}/getUser`, user),
 }
 
-export default actions;
+export default dbRoute;

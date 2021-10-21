@@ -1,13 +1,13 @@
 import React from "react";
 import { StyleSheet, Button, TextInput, View, Text } from "react-native";
 import { Formik } from "formik";
-import actions from '../routes/api'
+import dbRoute from '../routes/api'
 
 export default function NewUserForm(props){
 
-  const submitUser = async user => {
-    let res = await actions.newUser(user)
-    console.log(res);
+  const submitUser = async (user) => {
+    let res = await dbRoute.newUser(user)
+    console.log(res.data);
 }
 
 const formValues = { 
@@ -52,6 +52,7 @@ const styles = StyleSheet.create({
         padding: 10,
         fontSize: 18,
         borderRadius: 6,
+        marginVertical: 10,
     }
 })
 

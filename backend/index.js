@@ -12,7 +12,6 @@ mongoose
     .then(x => console.log(`Connected to ${x.connections[0].name}`))
     .catch(() => console.error("Error connecting to Mongo"))
 
-
 app.use(express.json())
 
 app.use(cors({
