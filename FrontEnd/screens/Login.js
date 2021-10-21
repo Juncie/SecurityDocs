@@ -18,7 +18,7 @@ function Login({ navigation }) {
             <Button
               title='Login'
               onPress={() => {
-                navigation.navigate('Home') ;
+                navigation.navigate('SAR') ;
               }}
             />
           </View>
