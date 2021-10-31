@@ -1,11 +1,16 @@
 const {Schema, model} = require('mongoose');
 
+const roles = ['Manager', 'manager', 'Admin', 'admin', 'User', 'user' ]
+
+const locations = ['Wittmann', 'wittmann', 'Mesa', 'mesa', 'Tempe', 'tempe']
+
+
 const userSchema = new Schema ({
-    last: String,
-    first: String,
-    userId: Number,
-    role: {type: String, enum: ['manager', 'admin', 'user' ]},
-    location: String  
+    first: {type: String, required: true},
+    last: {type: String, required: true},
+    userId: {type: Number, required: true},
+    role: {type: String, enum: roles, required: true},
+    location: {type: String, enum: locations, required: true,} 
 })
 
 

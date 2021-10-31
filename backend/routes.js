@@ -12,7 +12,7 @@ router.post('/newUser', async (req, res) => {
     const user = req.body
     console.log(req.body);
     User.create(user).then(newUser => {
-        console.log(`You've created a new user`);
+        console.log(`You've created a new user`, user);
         res.json(newUser)
     }).catch(err => {
         console.log(err);
