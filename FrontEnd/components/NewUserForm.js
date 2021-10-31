@@ -5,31 +5,33 @@ import dbRoute from '../routes/api'
 
 export default function NewUserForm(props){
 
-  const submitUser = async (user) => {
+  const submitUser = async user => {
     let res = await dbRoute.newUser(user)
-    console.log(res.data);
+    console.log(`You've created a new user!`, res.data);
 }
 
 const formValues = { 
-  last: "", 
   first: "", 
+  last: "", 
   userId: "", 
   role: "", 
   location: "" 
 }
+
+console.log(formValues);
 
   return (
     <View style={styles.container}>
       <Formik initialValues={formValues} onSubmit={submitUser}>
         {(props) => (
           <View>
-            <TextInput style={styles.input} placeholder='Last' onChange={props.handleChange('last')} value={props.values.last} />
-            <TextInput style={styles.input} placeholder='First' onChange={props.handleChange('first')} value={props.values.first} />
-            <TextInput style={styles.input} placeholder='UserId' onChange={props.handleChange('userId')} value={props.values.userId} />
-            <TextInput style={styles.input} placeholder='Role' onChange={props.handleChange('role')} value={props.values.role} />
-            <TextInput style={styles.input} placeholder='Location' onChange={props.handleChange('location')} value={props.values.location} />
+            <TextInput style={styles.input} placeholder='First' onChangeText={props.handleChange('last')} value={props.values.last} />
+            <TextInput style={styles.input} placeholder='Last' onChangeText={props.handleChange('first')} value={props.values.first} />
+            <TextInput style={styles.input} placeholder='UserId' onChangeText={props.handleChange('userId')} value={props.values.userId} />
+            <TextInput style={styles.input} placeholder='Role' onChangeText={props.handleChange('role')} value={props.values.role} />
+            <TextInput style={styles.input} placeholder='Location' onChangeText={props.handleChange('location')} value={props.values.location} />
 
-<Button title='Create User' onPress={props.handleSubmit} />
+            <Button title='Create User' onPress={props.handleSubmit} />
 
           </View>
         )}
