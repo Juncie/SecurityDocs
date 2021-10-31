@@ -3,9 +3,10 @@ import { StyleSheet, Button, TextInput, View, Text } from "react-native";
 import { Formik } from "formik";
 import dbRoute from '../routes/api'
 
-export default function NewUserForm(props){
 
-  const submitUser = async user => {
+export default function NewUserForm({navigation}){
+
+const submitUser = async user => {
     let res = await dbRoute.newUser(user)
     console.log(`You've created a new user!`, res.data);
 }

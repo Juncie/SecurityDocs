@@ -1,29 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Image, Keyboard, KeyboardAvoidingView, TextInput, TouchableWithoutFeedback, View, StyleSheet, Button, Text } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 
+import UserContext from "../context/UserContext";
+import dbRoute from "../routes/api";
 
 
-
-function Login({ navigation }) {
+function Login({navigation}) {
   const [enableShift, setEnableShift] = useState();
+  const [userId, setUserId] = useState('')
+  const [password, setPassword] = useState('')
+
   
-  return (
+const {user, setUser} = useContext(UserContext)
+
+const findUser = async userId => {
+  let res = await dbRoute.getUser(userId).then(user => {
+    console.log(user)
+    setUser(user)
+  })
+
+}  
+
+return (
     <KeyboardAvoidingView behavior='height' enabled={enableShift} style={styles.container}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      {/* <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
         <View style={styles.content}>
           <Image source={require("../assets/icon.png")} style={styles.image} />
-          <TextInput onFocus={() => setEnableShift(true)} placeholder='Employee Id' keyboardType='number-pad' style={styles.input} />
+          <TextInput onFocus={() => setEnableShift(true)} placeholder='Employee Id' style={styles.input} onChangeText={text => setUserId(text)} />
+          <TextInput onFocus={() => setEnableShift(true)} placeholder='Password' style={styles.input} onChangeText={text => setPassword(text)} />
           <View style={styles.btnContainer}>
-            <Button
-              title='Login'
-              onPress={() => {
-                navigation.navigate('SAR') ;
-              }}
-            />
+            <Button title='Login' onPress={findUser} />
+            <Button title='Register' onPress={() => navigation.navigate('Register')} />
           </View>
         </View>
-      </TouchableWithoutFeedback>
+      {/* </TouchableWithoutFeedback> */}
     </KeyboardAvoidingView>
   );
 };
@@ -38,7 +49,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   image: {
-    // flex: 1,
     resizeMode: "contain",
     width: 200,
     height: 200,
@@ -49,6 +59,7 @@ const styles = StyleSheet.create({
     borderColor: "black",
     borderWidth: 1,
     width: "75%",
+    height: 45,
     padding: 5,
   },
   btnContainer: {

@@ -16,7 +16,8 @@ console.log(serverUrl);
 
 const dbRoute = {
     newUser: async (user) => await axios.post(`${serverUrl}/newUser`, user),
-    getUser: async (user) => await axios.get(`${serverUrl}/getUser`, user),
+    getUser: async (userId) => await axios.get(`${serverUrl}/getUser`, userId),
+    findUser: async (userId) => await axios.post(`${serverUrl}/findUser`, userId),
 }
 
 export default dbRoute;

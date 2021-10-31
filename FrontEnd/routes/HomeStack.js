@@ -6,6 +6,7 @@ import Home from "../screens/Home";
 import Login from "../screens/Login";
 import SAR from "../screens/SAR";
 import Forms from "../screens/Forms";
+import Register from "../screens/Register";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,7 +15,8 @@ const HomeStack = ({ navigation }) => {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name='Login' component={Login} />
-        <Stack.Screen name='Home'component={Home}/>
+        <Stack.Screen name='Register' component={Register} />
+        <Stack.Screen name='Home'component={Home} />
         <Stack.Screen name='Forms' component={Forms} />
         <Stack.Screen name='SAR' component={SAR} />
       </Stack.Navigator>
