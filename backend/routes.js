@@ -10,6 +10,8 @@ router.get('/', (req, res) => {
 
 router.post('/newUser', async (req, res) => {
     const user = req.body
+    user._id = 0
+    
     User.create(user).then(newUser => {
         console.log(`You've created a new user`, user);
         res.json(newUser)
@@ -18,14 +20,10 @@ router.post('/newUser', async (req, res) => {
     })
   })
 
-router.post('/findUser', async (req, res)=> {
-  const user = await User.findOne({ userId: req.body.userId})
-  res.json(user)
-})
-
-router.get("/getUser", async (req, res) => {
-    let user = await User.findOne(user);
-    res.json(user);
-  });
+  router.get("/userAuth/:id", async (req, res) => {
+    let user = await User.findOne({ userId: req.params.id });
+    console.log('User was found ' + user)
+    res.json(user)
+  })
 
 module.exports = router;

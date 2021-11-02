@@ -14,10 +14,10 @@ console.log(serverUrl);
 //   return { headers: { Authorization: `Bearer ${AsyncStorage.getitem("token")}`}};
 // }
 
-const dbRoute = {
-    newUser: async (user) => await axios.post(`${serverUrl}/newUser`, user),
-    getUser: async (userId) => await axios.get(`${serverUrl}/getUser`, userId),
-    findUser: async (userId) => await axios.post(`${serverUrl}/findUser`, userId),
+const db = {
+    userAuth: async userId => await axios.get(`${serverUrl}/userAuth/${userId}`),
+    newUser: async user => await axios.post(`${serverUrl}/newUser`, user),
+    getUser: async () => await axios.get(`${serverUrl}/getUser`),
 }
 
-export default dbRoute;
+export default db;

@@ -1,39 +1,45 @@
-import { Formik } from "formik";
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { StyleSheet, View, TextInput, Button, TouchableWithoutFeedback, Keyboard } from "react-native";
-import dbRoute from "../routes/api";
+import { AuthContext } from "../context/AuthContext";
+import db from "../routes/api";
 
 export default function LoginForm(props) {
-  let [user, setUser] = useState({});
-
-  const handleLogin = async (user) => {
-    let res = await dbRoute.findUser(user);
-    console.log(res.data);
+  let {user, setUser, loading, setLoading} = useContext(AuthContext)
+  let [userId, setUserId] = useState('')
+  
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    let res = await db.userAuth(userId);
+    setUser(res.data)
   };
+  useEffect(() => {
+    console.log(user ? true : false);
+  }, []);
+  
+console.log(userId);
 
-  return (
-    <Formik initialValues={{ userId: "" }} onSubmit={handleLogin} style={styles.container}>
-      {(props) => (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View>
+return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View>
             <TextInput
               keyboardType='numeric'
               style={styles.input}
               placeholder='User ID'
-              onChange={props.handleChange("userId")}
-              value={props.values.userId}
+              onChangeText={text => setUserId(text)}
             />
             <View style={styles.btnContainer}>
-                <Button title='Login' onPress={props.handleSubmit} />
+                <Button title='Login' onPress={handleLogin} />
             </View>
           </View>
         </TouchableWithoutFeedback>
-      )}
-    </Formik>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+
+  },
+  
   btnContainer: {
     alignItems: "center",
   },

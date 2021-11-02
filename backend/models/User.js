@@ -6,11 +6,11 @@ const locations = ['Wittmann', 'wittmann', 'Mesa', 'mesa', 'Tempe', 'tempe']
 
 
 const userSchema = new Schema ({
-    first: {type: String, required: true},
-    last: {type: String, required: true},
-    userId: {type: Number, required: true, unique: true},
-    role: {type: String, enum: roles, required: true},
-    location: {type: String, enum: locations, required: true,} 
+    first: {type: String},
+    last: {type: String},
+    userId: { type: Number, unique: true},
+    role: {type: String, enum: roles},
+    location: {type: String, enum: locations}
 })
 
 

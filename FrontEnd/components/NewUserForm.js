@@ -1,22 +1,19 @@
 import React from "react";
 import { StyleSheet, Button, TextInput, View, Text } from "react-native";
 import { Formik } from "formik";
-import dbRoute from '../routes/api'
+import db from '../routes/api'
 
 
 export default function NewUserForm({navigation}){
 
 const submitUser = async user => {
-    let res = await dbRoute.newUser(user)
+    let res = await db.findUser(user)
     console.log(`You've created a new user!`, res.data);
 }
 
 const formValues = { 
-  first: "", 
-  last: "", 
-  userId: "", 
-  role: "", 
-  location: "" 
+  userId: '',
+  password: '',
 }
 
 console.log(formValues);
@@ -26,11 +23,8 @@ console.log(formValues);
       <Formik initialValues={formValues} onSubmit={submitUser}>
         {(props) => (
           <View>
-            <TextInput style={styles.input} placeholder='First' onChangeText={props.handleChange('last')} value={props.values.last} />
-            <TextInput style={styles.input} placeholder='Last' onChangeText={props.handleChange('first')} value={props.values.first} />
             <TextInput style={styles.input} placeholder='UserId' onChangeText={props.handleChange('userId')} value={props.values.userId} />
-            <TextInput style={styles.input} placeholder='Role' onChangeText={props.handleChange('role')} value={props.values.role} />
-            <TextInput style={styles.input} placeholder='Location' onChangeText={props.handleChange('location')} value={props.values.location} />
+            <TextInput style={styles.input} placeholder='Password' onChangeText={props.handleChange('password')} value={props.values.password} />
 
             <Button title='Create User' onPress={props.handleSubmit} />
 
