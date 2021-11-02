@@ -3,18 +3,20 @@ import { StyleSheet, View, TextInput, Button, TouchableWithoutFeedback, Keyboard
 import { AuthContext } from "../context/AuthContext";
 import db from "../routes/api";
 
-export default function LoginForm(props) {
+export default function LoginForm({navigation}) {
   let {user, setUser, loading, setLoading} = useContext(AuthContext)
   let [userId, setUserId] = useState('')
+  
+  
   
   const handleLogin = async (e) => {
     e.preventDefault();
     let res = await db.userAuth(userId);
     setUser(res.data)
   };
-  useEffect(() => {
-    console.log(user ? true : false);
-  }, []);
+
+console.log(user ? user : false);
+
   
 console.log(userId);
 

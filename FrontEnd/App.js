@@ -10,7 +10,7 @@ import {AuthProvider, AuthContext} from "./context/AuthContext";
 function App(){
   const {user} = useContext(AuthContext)
 
-  user ? 'User is working' : 'No User'
+  console.log(`App is working${user}`);
   // let fonts = Font.useFonts({
   //   "Montserrat-Regular": require("./assets/fonts/Montserrat-Regular.ttf"),
   //   "Montserrat-Bold": require("./assets/fonts/Montserrat-Bold.ttf"),
@@ -18,7 +18,7 @@ function App(){
 
 return (
 <AuthProvider> 
-  {user? <HomeStack /> : <AuthStack />} 
+  {user ? <HomeStack /> : <AuthStack />} 
 </AuthProvider>
 )
 

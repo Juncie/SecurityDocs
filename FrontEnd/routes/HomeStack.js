@@ -14,8 +14,6 @@ const HomeStack = ({ navigation }) => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name='Login' component={Login} />
-        <Stack.Screen name='Register' component={Register} />
         <Stack.Screen name='Home'component={Home} />
         <Stack.Screen name='Forms' component={Forms} />
         <Stack.Screen name='SAR' component={SAR} />
