@@ -6,7 +6,6 @@ import Home from "../screens/Home";
 import Login from "../screens/Login";
 import SAR from "../screens/SAR";
 import Forms from "../screens/Forms";
-import Register from "../screens/Register";
 
 const Stack = createNativeStackNavigator();
 
