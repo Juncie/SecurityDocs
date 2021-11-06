@@ -11,7 +11,7 @@ connectDB();
 
 app.use(express.json())
 
-app.use(cors({origin: ['http://localhost:3000', process.env.clientURL, 'http://localhost:19006', '27.0.0.1:5000']}))
+app.use(cors({origin: ['http://localhost:3000', process.env.clientURL, 'http://localhost:19006', 'http://localhost:5000']}))
 
 // app.use('/api', require('./routes.js'))
 app.use('/api/auth', require('./routes/auth.js'))

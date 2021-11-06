@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const URI = process.env.MONGODB_URI || 'mongodb://localhost/GDK'
+const URI = process.env.MONGODB_URI || 'mongodb://localhost/LocalGDK'
 
 const connectDB = async() => {
     await mongoose
