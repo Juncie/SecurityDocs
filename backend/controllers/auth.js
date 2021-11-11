@@ -5,16 +5,11 @@ const ErrorResponse = require('../utils/errorRes')
 exports.register = async (req, res, next) => {
   const { first, last, userId, role, location, password, email } = req.body;
   try {
-    const user = await User.create({ 
-      first, last, userId, role, location, password, email
-    });
-    res.status(201).json({
-      success: true,
-      user
-    })
+    const user = await User.create({ first, last, userId, role, location, password, email});
+    sendToken(user, 201, res)
   } catch (error) {
     res.status(500).json({
-      success:false,
+      success: false,
       error: error.message
     })
   }
@@ -24,25 +19,24 @@ exports.login = async (req, res, next) => {
   const {userId, password} = req.body;
 
   if(!userId || !password){
-    // return next(new ErrorResponse("Please provide a User ID & Password", 400))
-    res.status(400).json({success: false, error: "Please provide User ID & Password"})
+    return next(new ErrorResponse("Please provide a User ID & Password", 400))
   }
     try {
     const user = await User.findOne({userId}).select("+password")
     
     if (!user){
-      return next(new ErrorResponse("Invalid Credentials", 404))
+      return next(new ErrorResponse("Invalid User", 404))
     }
 
-    const isMatch = await user.matchPasswords(password);  
+    const isMatch = await user.matchPassword(password);  
     
     if (!isMatch){
-      return next(new ErrorResponse("Invalid Credentials", 404))
+      return next(new ErrorResponse("Invalid Password", 404))
     }
     sendToken(user, 200, res)
   } 
     catch (error) { 
-      res.status(500).json({success: false, error: error.message})
+      next(new ErrorResponse(`${error.message}`, 500))
     } 
   }
 
@@ -56,6 +50,6 @@ exports.resetPassword = (req, res, next) => {
 }
 
 const sendToken = (user, statusCode, res) => {
-  const token = user.getSignedToken();
+  const token = user.getSignedJWT();
   res.status(statusCode).json({success: true, token})
 }
