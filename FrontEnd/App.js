@@ -1,27 +1,11 @@
-import React, { useState, useEffect, useContext, createContext } from "react";
-import AppLoading from "expo-app-loading";
-import * as Font from "expo-font";
+import React from "react";
 
-import HomeStack from "./routes/HomeStack";
-import AuthStack from "./routes/AuthStack";
-import {AuthProvider, AuthContext} from "./context/AuthContext";
+import AppStack from "./routes/index";
+import { AuthProvider } from "./context/useAuth";
+import { NavigationContainer } from "@react-navigation/native";
 
-
-function App(){
-  const {user} = useContext(AuthContext)
-
-  console.log(`App is working${user}`);
-  // let fonts = Font.useFonts({
-  //   "Montserrat-Regular": require("./assets/fonts/Montserrat-Regular.ttf"),
-  //   "Montserrat-Bold": require("./assets/fonts/Montserrat-Bold.ttf"),
-  // });
-
-return (
-<AuthProvider> 
-  {user ? <HomeStack /> : <AuthStack />} 
-</AuthProvider>
-)
-
+export default function App({navigation}) {
+  return <AuthProvider>
+          <AppStack />
+         </AuthProvider>
 }
-
-export default App;
