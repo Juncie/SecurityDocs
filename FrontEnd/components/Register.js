@@ -13,29 +13,15 @@ import {
 import useAuth from '../context/useAuth';
 
 const Register = () => {
-	const {
-		user,
-		setUser,
-		first,
-		setFirst,
-		last,
-		setLast,
-		email,
-		setEmail,
-		userId,
-		setUserId,
-		role,
-		setRole,
-		location,
-		setLocation,
-		password,
-		setPassword,
-		error,
-		setError,
-		loading,
-		setLoading,
-	} = useAuth();
+	const { user, setUser, error, setError, loading, setLoading } = useAuth();
 
+	const [first, setFirst] = useState('');
+	const [last, setLast] = useState('');
+	const [email, setEmail] = useState('');
+	const [userId, setUserId] = useState('');
+	const [role, setRole] = useState('');
+	const [location, setLocation] = useState('');
+	const [password, setPassword] = useState('');
 	const [confirmEmail, setConfirmEmail] = useState('');
 	const [confirmPassword, setConfirmPassword] = useState('');
 	const [profile, setProfile] = useState({});
@@ -48,6 +34,7 @@ const Register = () => {
 		newProfile[name] = val;
 		setProfile(newProfile);
 	};
+	
 	const handleSubmit = async () => {
 		setLoading(true);
 		if (email !== confirmEmail) {
@@ -77,8 +64,6 @@ const Register = () => {
 			setTimeout(() => setError(''), 5000);
 		}
 	};
-
-	console.log({ email }, { confirmEmail }, { password }, { confirmPassword });
 
 	if (!loading) {
 		<ActivityIndicator size='large' color='green' />;
