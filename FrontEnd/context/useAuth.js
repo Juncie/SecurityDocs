@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, StyleSheet } from 'react-native';
 import { set } from 'react-native-reanimated';
 
 import dbActions from '../api/api';
@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
 		} else {
 			setUser(null);
 		}
-		console.log('Use Effect Completed');
 		setLoadingInitial(false);
 	}, []);
 
@@ -39,10 +38,20 @@ export const AuthProvider = ({ children }) => {
 				logout
 			}}
 		>
-			{!loadingInitial && children}
+			{loadingInitial ? <ActivityIndicator size='large' color='green' style={styles.loading} /> : children}
 		</AuthContext.Provider>
 	);
 };
+
+const styles = StyleSheet.create({
+	loading:{ 
+		flex: 1,
+		justifyContent:"center",
+		alignSelf:'center',
+	}
+})
+
+
 
 export default function useAuth() {
 	return useContext(AuthContext);
