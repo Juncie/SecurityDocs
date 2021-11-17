@@ -13,9 +13,11 @@ const userSchema = new Schema({
   userId: { type: Number, unique: [true, "User Already Exists"], required: [true, "Please insert a UserID"] },
   role: { type: String, enum: roles, required: [true, "Please select a role"] },
   location: { type: String, enum: locations, required: [true, "Please enter a location"] },
-  password: { type: String, required: [true, "Please add a password"], minlength: 6, select: false },
+  password: { type: String, required: [true, "Please add a password"], minlength: 5, select: false },
   resetToken: String,
   resetPasswordExpire: Date,
+},{
+  timestamps: true,
 });
 
 userSchema.pre("save", async function (next) {

@@ -6,13 +6,12 @@ const sendEmail = require('../utils/sendEmail');
 exports.register = async (req, res, next) => {
 	const { first, last, email, userId, role, location, password } = req.body;
 	try {
-		const user = await User.create({ first, last, userId, role, location, password, email });
-		sendToken(user, 201, res);
+		const user = await User.create({ first, last, email, userId, role, location, password,  });
+		sendToken(user, 201, res, 'User Successfully Created!');
+		console.log(`User has been registered!`, user)
 	} catch (error) {
-		res.status(500).json({
-			success: false,
-			error: 'User could not be created, please try again',
-		});
+		console.log(`error`, {error})
+		return next(new ErrorResponse(`${error.message}`, 500));
 	}
 };
 
@@ -36,6 +35,7 @@ exports.login = async (req, res, next) => {
 		}
 		sendToken(user, 200, res);
 	} catch (error) {
+
 		next(new ErrorResponse(`${error.message}`, 500));
 	}
 };
@@ -128,7 +128,7 @@ exports.getUser = async (req, res, next) => {
 	}
 };
 
-const sendToken = (user, statusCode, res) => {
+const sendToken = (user, statusCode, res, message) => {
 	const token = user.getSignedJWT();
-	res.status(statusCode).json({ success: true, token });
+	res.status(statusCode).json({ success: true, token, message: message });
 };

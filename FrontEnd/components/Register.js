@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/core';
 import React, { useEffect, useState } from 'react';
-import { Formik, ErrorMessage } from 'formik';
+import { Formik } from 'formik';
 import {
 	StyleSheet,
 	Text,
@@ -11,50 +11,15 @@ import {
 	ActivityIndicator,
 	ScrollView,
 	Button,
+	Alert
 } from 'react-native';
 import * as yup from 'yup';
 
 import useAuth from '../context/useAuth';
-import { dbActions as database } from '../api/api';
 
 const Register = () => {
-	const { user, setUser, error, setError, loading, setLoading } = useAuth();
-
+	const { error, setError, loading, setLoading } = useAuth();
 	const [showErr, setShowErr] = useState(false);
-	const [submitting, setSubmitting] = useState(true);
-
-	const validate = yup.object().shape({
-		first: yup.string().min(2, 'First name is too short').required('First name is required'),
-
-		last: yup.string().min(2, 'Last name is too short').required('Last name is required'),
-
-		email: yup.string().email('Email is not a valid.').required('Email is required'),
-
-		confirmEmail: yup
-			.string()
-			.required('Please confirm your email address.')
-			.oneOf([yup.ref('email'), null], 'Emails do not match'),
-
-		userId: yup.string().min(5, 'User ID must be at least 5 characters long.'),
-
-		role: yup
-			.string()
-			.oneOf(['Manager', 'manager', 'Admin', 'admin', 'User', 'user'], 'Invalid role')
-			.required('Role is required'),
-
-		location: yup.string().oneOf(['Wittmann', 'Mesa', 'Tempe']).required('Location is required'),
-
-		password: yup
-			.string()
-			.required('Password is required')
-			.min(5, 'Password must be at least 5 characters long.'),
-
-		confirmPassword: yup
-			.string()
-			.oneOf([yup.ref('password')], 'Passwords do not match.')
-			.required('Please confirm your password.'),
-	});
-
 	const formValues = {
 		first: '',
 		last: '',
@@ -67,56 +32,96 @@ const Register = () => {
 		confirmPassword: '',
 	};
 
+	const LoadView = ActivityIndicator;
 	const navigation = useNavigation();
 	const goToLogin = () => navigation.navigate('Login');
 
-	const handleSubmit = async (profile, actions) => {
-		setShowErr(true);
+	const validationSchema = yup.object().shape({
+		first: yup.string().min(2, 'First name is too short').required('First name is required'),
+		last: yup.string().min(2, 'Last name is too short').required('Last name is required'),
+		email: yup.string().email('Email is not a valid.').required('Email is required'),
+		confirmEmail: yup
+			.string()
+			.required('Please confirm your email address.')
+			.oneOf([yup.ref('email'), null], 'Emails do not match'),
+		userId: yup.string().min(5, 'User ID must be at least 5 characters long.'),
+		role: yup
+			.string()
+			.oneOf(['Manager', 'manager', 'Admin', 'admin', 'User', 'user'], 'Invalid role')
+			.required('Role is required'),
+		location: yup.string().oneOf(['Wittmann', 'Mesa', 'Tempe']).required('Location is required'),
+		password: yup
+			.string()
+			.required('Password is required')
+			.min(5, 'Password must be at least 5 characters long.'),
+		confirmPassword: yup
+			.string()
+			.oneOf([yup.ref('password')], 'Passwords do not match.')
+			.required('Please confirm your password.'),
+	});
+
+	const validate = async () => {
+		const validateResult = await validationSchema
+			.validate(validationSchema, { abortEarly: false })
+			.catch((err) => {
+				setShowErr(true);
+				setTimeout(() => setShowErr(false), 15000);
+			});
+		return validateResult;
+	};
+
+	const handleSubmit = async (profile) => {
 		setLoading(true);
-		resetForm({ values: '' });
-		setTimeout(() => setShowErr(false), 15000);
-		actions.resetForm();
+		profile.confirmPassword = undefined;
+		profile.confirmEmail = undefined;
+		console.log(profile)
 		try {
 			setLoading(false);
+			setShowErr(false);
 			let res = await dbActions.register(profile);
-			console.log(`profile has been created: ${profile.first}`);
-		} catch (error) {
+			Alert.alert(
+				`${profile.first} is now an authorizied ${profile.role}`,
+				"Would you like to create another user?",
+				[
+				  {
+					text: "Create another user",
+					style: "cancel"
+				  },
+				  { text: "Back to Login", onPress: () => navigation.navigate("Login") }
+				]
+			  );
+		} catch (err) { 
+			console.log(err.message);
 			setLoading(false);
-			setShowErr(true);
-			setError(error.response.data.error);
-			setInterval(() => {
-				setError('');
-			}, 5000);
+			setError(err.response.data.error);
+			setTimeout(() => setError(''), 15000);
+			setTimeout(() => setShowErr(false), 7000);
 		}
 	};
 
-	{
-		loading && <ActivityIndicator size='large' color='green' />;
-	}
+	if (loading) return <LoadView size='large' color='green' style={styles.AI} />;
 
 	return (
 		<ScrollView>
 			<Text style={styles.errorMessage}>{error && <Text>{error}</Text>}</Text>
 			<Formik
 				style={styles.container}
-				validateOnMount={true}
 				initialValues={formValues}
-				onSubmit={(values, actions) => {
-					handleSubmit(values);
-					actions.resetForm();
-				}}
-				validationSchema={validate}
+				onSubmit={handleSubmit}
+				validationSchema={validationSchema}
+				validateOnChange={false}
+				validate={validate}
 			>
-				{({ values, handleChange, handleBlur, errors, isValid, resetForm }) => (
-					<ScrollView style={styles.innerContainer}>
+				{({ values, handleChange, handleSubmit, errors }) => (
+					<ScrollView>
 						<TextInput
 							placeholder='First'
-							onBlur={handleBlur('first')}
 							value={values.first}
 							onChangeText={handleChange('first')}
 							style={styles.input}
 						/>
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.first}</Text>}</Text>
+
 						<TextInput
 							placeholder='Last'
 							value={values.last}
@@ -124,20 +129,25 @@ const Register = () => {
 							style={styles.input}
 						/>
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.last}</Text>}</Text>
+
 						<TextInput
 							placeholder='Email'
 							value={values.email}
 							onChangeText={handleChange('email')}
 							style={styles.input}
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.email}</Text>}</Text>
+
 						<TextInput
 							placeholder='Confirm Email'
 							value={values.confirmEmail}
 							onChangeText={handleChange('confirmEmail')}
 							style={styles.input}
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.confirmEmail}</Text>}</Text>
+
 						<TextInput
 							placeholder='User id'
 							maxLength={5}
@@ -146,21 +156,27 @@ const Register = () => {
 							style={styles.input}
 							keyboardType='number-pad'
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.userId}</Text>}</Text>
+
 						<TextInput
 							placeholder='Role'
 							value={values.role}
 							onChangeText={handleChange('role')}
 							style={styles.input}
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.role}</Text>}</Text>
+
 						<TextInput
 							placeholder='Location'
 							value={values.location}
 							onChangeText={handleChange('location')}
 							style={styles.input}
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.location}</Text>}</Text>
+
 						<TextInput
 							placeholder='Password'
 							value={values.password}
@@ -169,7 +185,9 @@ const Register = () => {
 							style={styles.input}
 							autoCapitalize={'none'}
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.password}</Text>}</Text>
+
 						<TextInput
 							placeholder='Confirm Password'
 							value={values.confirmPassword}
@@ -178,12 +196,10 @@ const Register = () => {
 							style={styles.input}
 							autoCapitalize={'none'}
 						/>
+
 						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.confirmPassword}</Text>}</Text>
-						<TouchableOpacity
-							style={styles.button}
-							onPress={(values, resetForm) => {handleSubmit(values, resetForm)}}
-							style={styles.button}
-						>
+
+						<TouchableOpacity style={styles.button} onPress={handleSubmit} style={styles.button}>
 							<Text style={styles.text}>Register This User</Text>
 						</TouchableOpacity>
 					</ScrollView>
@@ -204,6 +220,7 @@ const styles = StyleSheet.create({
 		width: '100%',
 		justifyContent: 'center',
 	},
+
 	button: {
 		backgroundColor: 'green',
 		padding: 15,
@@ -249,5 +266,10 @@ const styles = StyleSheet.create({
 		marginVertical: 5,
 		width: '75%',
 		alignSelf: 'center',
+	},
+	AI: {
+		height: '100%',
+		justifyContent: 'center',
+		alignItems: 'center',
 	},
 });
