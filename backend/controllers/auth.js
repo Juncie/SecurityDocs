@@ -25,17 +25,17 @@ exports.login = async (req, res, next) => {
 		const user = await User.findOne({ userId }).select('+password');
 
 		if (!user) {
-			return next(new ErrorResponse('Invalid User', 404));
+			return next(new ErrorResponse('Invalid User', 400));
 		}
 
 		const isMatch = await user.matchPassword(password);
 
 		if (!isMatch) {
-			return next(new ErrorResponse('Invalid Password', 404));
+			return next(new ErrorResponse('Invalid Password', 401));
 		}
 		sendToken(user, 200, res);
 	} catch (error) {
-
+		console.log(`error`, error.message)
 		next(new ErrorResponse(`${error.message}`, 500));
 	}
 };
@@ -130,5 +130,5 @@ exports.getUser = async (req, res, next) => {
 
 const sendToken = (user, statusCode, res, message) => {
 	const token = user.getSignedJWT();
-	res.status(statusCode).json({ success: true, token, message: message });
+	res.status(statusCode).json({ success: true, token, message });
 };
