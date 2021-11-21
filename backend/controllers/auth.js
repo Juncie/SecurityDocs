@@ -6,17 +6,26 @@ const sendEmail = require('../utils/sendEmail');
 exports.register = async (req, res, next) => {
 	const { first, last, email, userId, role, location, password } = req.body;
 	try {
-		const user = await User.create({ first, last, email, userId, role, location, password,  });
+		const user = await User.create({
+			first,
+			last,
+			email,
+			userId,
+			role,
+			location,
+			password,
+		});
 		sendToken(user, 201, res, 'User Successfully Created!');
-		console.log(`User has been registered!`, user)
+		console.log(`User has been registered!`, user);
 	} catch (error) {
-		console.log(`error`, {error})
+		console.log(`error`, { error });
 		return next(new ErrorResponse(`${error.message}`, 500));
 	}
 };
 
 exports.login = async (req, res, next) => {
 	const { userId, password } = req.body;
+	console.log(req.body);
 
 	if (!userId || !password) {
 		return next(new ErrorResponse('Please provide a User ID & Password', 400));
@@ -27,15 +36,15 @@ exports.login = async (req, res, next) => {
 		if (!user) {
 			return next(new ErrorResponse('Invalid User', 400));
 		}
-
 		const isMatch = await user.matchPassword(password);
-
 		if (!isMatch) {
-			return next(new ErrorResponse('Invalid Password', 401));
+			return next(new ErrorResponse('User not found', 401));
 		}
+		console.log(`user`, user);
 		sendToken(user, 200, res);
+		console.log('Token Sent!');
 	} catch (error) {
-		console.log(`error`, error.message)
+		console.log(`error`, error.message);
 		next(new ErrorResponse(`${error.message}`, 500));
 	}
 };
@@ -49,7 +58,7 @@ exports.forgotPassword = async (req, res, next) => {
 		if (!user) {
 			return res.status(404).json({
 				success: false,
-				message: `Invalid User: ${error.message}`,
+				message: `Invalid User`,
 			});
 		}
 		const resetToken = user.getResetToken();
@@ -75,13 +84,8 @@ exports.forgotPassword = async (req, res, next) => {
 		} catch (error) {
 			user.resetToken = undefined;
 			user.resetPasswordExpire = undefined;
-
 			await user.save();
-
-			return res.status(500).json({
-				success: false,
-				message: `Email not sent: ${error.message}`,
-			});
+			return next(new ErrorResponse('Email could not be sent.', 500));
 		}
 	} catch (error) {
 		next(error);
@@ -89,7 +93,10 @@ exports.forgotPassword = async (req, res, next) => {
 };
 
 exports.resetPassword = async (req, res, next) => {
-	const resetToken = crypto.createHash('sha256').update(req.params.resetToken).digest('hex');
+	const resetToken = crypto
+		.createHash('sha256')
+		.update(req.params.resetToken)
+		.digest('hex');
 
 	try {
 		const user = await User.findOne({

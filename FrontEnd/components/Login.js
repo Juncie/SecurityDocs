@@ -1,108 +1,77 @@
-import { useNavigation } from '@react-navigation/core';
-import { Formik } from 'formik';
 import React, { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import * as Yup from 'yup';
+import { StyleSheet, Text, TextInput, View, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import dbActions from '../api/api';
 import useAuth from '../context/useAuth';
+import CustomInput from './custom/CustomInput';
+import CustomButton from './custom/CustomButton';
+import Container from './custom/CustomContainer';
+import { GlobalStyles } from '../styles/GlobalStyles';
 
 const Login = () => {
-	const { error, setError } = useAuth();
-	const [showErr, setShowErr] = useState(false);
+	const { setUser, error, setError } = useAuth();
+	const [userId, setUserId] = useState('');
+	const [password, setPassword] = useState('');
 
 	const navigation = useNavigation();
 
-	const validation = Yup.object().shape({
-		userId: Yup.string().required('User Id is required.'),
-		password: Yup.string().required('Password is required.'),
-	});
-
-	const validate = async () => {
-		const validateResult = await validation
-			.validate(validation, { abortEarly: false })
-			.catch((err) => {
-				setShowErr(true);
-				setTimeout(() => setShowErr(false), 15000);
-			});
-		return validateResult;
-	};
-
-	const handleLogin = async (profile) => {
-		console.log(`profile`, profile);
+	const handleLogin = async () => {
+		if (!userId || !password) {
+			setError('Please provide a login and password.');
+			setTimeout(() => setError(''), 5000);
+		}
 		try {
-			let res = await dbActions.login(profile);
-			if (!user) {
-				alert('Invalid Login');
-			}
+			let res = await dbActions.login({ userId, password });
+			console.log(res);
 		} catch (error) {
 			setError(error.message);
+			console.log(error.message);
 			setTimeout(() => setError(''), 5000);
 		}
 	};
 
 	return (
-		<View style={styles.container}>
+		<Container>
 			<Text style={styles.errorMessage}>{error && <Text>{error}</Text>}</Text>
-			<Formik
-				initialValues={{ userId: '', password: '' }}
-				onSubmit={handleLogin}
-				validationSchema={validation}
-				validateOnChange={false}
-				validate={validate}
-			>
-				{({ values, handleChange, handleSubmit, errors }) => (
-					<ScrollView>
-						<TextInput
-							style={styles.input}
-							value={values.userId}
-							placeholder='User Id'
-							onChangeText={handleChange('userId')}
-						/>
-						<Text style={styles.errorMsg}>{showErr&& <Text>{errors?.userId}</Text>}</Text>
-
-						<TextInput
-							style={styles.input}
-							value={values.password}
-							placeholder='Password'
-							onChangeText={handleChange('password')}
-						/>
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.userId}</Text>}</Text>
-						<Button title='Login' onPress={handleSubmit} />
-						<Button title='Register' onPress={() => navigation.navigate('Register')} />
-					</ScrollView>
-				)}
-			</Formik>
-		</View>
+			<View style={styles.inputSection}>
+				<CustomInput
+					placeholder='User ID'
+					value={userId}
+					setValue={setUserId}
+				/>
+				<CustomInput
+					placeholder='Password'
+					value={password}
+					setValue={setPassword}
+					secureTextEntry={true}
+				/>
+				<CustomButton text='Login' onPress={handleLogin} />
+				<CustomButton
+					text='Register'
+					type='SECONDARY'
+					onPress={() => navigation.navigate('Register')}
+				/>
+				<CustomButton text='Home' onPress={() => navigation.navigate('Home')} />
+			</View>
+		</Container>
 	);
 };
 
 export default Login;
 
 const styles = StyleSheet.create({
-	container: {
-		height: '100%',
-		width: '100%',
+	inputSection: {
+		alignContent: 'center',
+		height: '80%',
+		width: '85%',
 		justifyContent: 'center',
+		backgroundColor: '#fefefe',
 	},
-	input: {
-		borderBottomColor: 'black',
-		borderBottomWidth: 1,
-		padding: 10,
-		marginVertical: 5,
-		width: '75%',
-		alignSelf: 'center',
-	},
-
 	errorMessage: {
 		marginVertical: 10,
 		alignSelf: 'center',
 		color: 'red',
-	},
-	errorMsg: {
-		alignSelf: 'flex-start',
-		color: 'red',
-		marginVertical: 5,
-		marginLeft: 50,
 	},
 });

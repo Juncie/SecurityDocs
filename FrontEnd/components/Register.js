@@ -4,22 +4,25 @@ import { Formik } from 'formik';
 import {
 	StyleSheet,
 	Text,
-	TextInput,
 	View,
+	TextInput,
 	TouchableOpacity,
-	SafeAreaView,
 	ActivityIndicator,
 	ScrollView,
-	Button,
-	Alert
+	Alert,
 } from 'react-native';
 import * as yup from 'yup';
-
 import useAuth from '../context/useAuth';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import Container from './custom/CustomContainer';
+import CustomButton from './custom/CustomButton';
+import CustomInput from './custom/CustomInput';
 
 const Register = () => {
 	const { error, setError, loading, setLoading } = useAuth();
 	const [showErr, setShowErr] = useState(false);
+
 	const formValues = {
 		first: '',
 		last: '',
@@ -74,23 +77,24 @@ const Register = () => {
 		setLoading(true);
 		profile.confirmPassword = undefined;
 		profile.confirmEmail = undefined;
-		console.log(profile)
+		console.log(profile);
 		try {
 			setLoading(false);
 			setShowErr(false);
-			let res = await dbActions.register(profile);
+			const { data } = await dbActions.register(profile);
+			AsyncStorage.setItem('authToken', data.token);
 			Alert.alert(
 				`${profile.first} is now an authorizied ${profile.role}`,
-				"Would you like to create another user?",
+				'Would you like to create another user?',
 				[
-				  {
-					text: "Create another user",
-					style: "cancel"
-				  },
-				  { text: "Back to Login", onPress: () => navigation.navigate("Login") }
+					{
+						text: 'Create another user',
+						style: 'cancel',
+					},
+					{ text: 'Back to Login', onPress: () => navigation.navigate('Login') },
 				]
-			  );
-		} catch (err) { 
+			);
+		} catch (err) {
 			console.log(err.message);
 			setLoading(false);
 			setError(err.response.data.error);
@@ -102,156 +106,123 @@ const Register = () => {
 	if (loading) return <LoadView size='large' color='green' style={styles.AI} />;
 
 	return (
-		<ScrollView>
+		<Container>
 			<Text style={styles.errorMessage}>{error && <Text>{error}</Text>}</Text>
-			<Formik
-				style={styles.container}
-				initialValues={formValues}
-				onSubmit={handleSubmit}
-				validationSchema={validationSchema}
-				validateOnChange={false}
-				validate={validate}
-			>
-				{({ values, handleChange, handleSubmit, errors }) => (
-					<ScrollView>
-						<TextInput
-							placeholder='First'
-							value={values.first}
-							onChangeText={handleChange('first')}
-							style={styles.input}
-						/>
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.first}</Text>}</Text>
-
-						<TextInput
-							placeholder='Last'
-							value={values.last}
-							onChangeText={handleChange('last')}
-							style={styles.input}
-						/>
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.last}</Text>}</Text>
-
-						<TextInput
-							placeholder='Email'
-							value={values.email}
-							onChangeText={handleChange('email')}
-							style={styles.input}
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.email}</Text>}</Text>
-
-						<TextInput
-							placeholder='Confirm Email'
-							value={values.confirmEmail}
-							onChangeText={handleChange('confirmEmail')}
-							style={styles.input}
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.confirmEmail}</Text>}</Text>
-
-						<TextInput
-							placeholder='User id'
-							maxLength={5}
-							value={values.userId}
-							onChangeText={handleChange('userId')}
-							style={styles.input}
-							keyboardType='number-pad'
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.userId}</Text>}</Text>
-
-						<TextInput
-							placeholder='Role'
-							value={values.role}
-							onChangeText={handleChange('role')}
-							style={styles.input}
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.role}</Text>}</Text>
-
-						<TextInput
-							placeholder='Location'
-							value={values.location}
-							onChangeText={handleChange('location')}
-							style={styles.input}
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.location}</Text>}</Text>
-
-						<TextInput
-							placeholder='Password'
-							value={values.password}
-							onChangeText={handleChange('password')}
-							secureTextEntry={true}
-							style={styles.input}
-							autoCapitalize={'none'}
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.password}</Text>}</Text>
-
-						<TextInput
-							placeholder='Confirm Password'
-							value={values.confirmPassword}
-							onChangeText={handleChange('confirmPassword')}
-							secureTextEntry={true}
-							style={styles.input}
-							autoCapitalize={'none'}
-						/>
-
-						<Text style={styles.errorMsg}>{showErr && <Text>{errors?.confirmPassword}</Text>}</Text>
-
-						<TouchableOpacity style={styles.button} onPress={handleSubmit} style={styles.button}>
-							<Text style={styles.text}>Register This User</Text>
-						</TouchableOpacity>
-					</ScrollView>
-				)}
-			</Formik>
-			<TouchableOpacity style={styles.secondaryButton} onPress={goToLogin}>
-				<Text style={styles.secondaryText}>Back to Login</Text>
-			</TouchableOpacity>
-		</ScrollView>
+			<ScrollView>
+				<Formik
+					initialValues={formValues}
+					onSubmit={handleSubmit}
+					validationSchema={validationSchema}
+					validateOnChange={false}
+					validate={validate}
+				>
+					{({ values, handleChange, handleSubmit, errors }) => (
+						<View>
+							<TextInput
+								placeholder='First'
+								value={values.first}
+								onChangeText={handleChange('first')}
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.first}</Text>}</Text>
+							<TextInput
+								placeholder='Last'
+								value={values.last}
+								onChangeText={handleChange('last')}
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.last}</Text>}</Text>
+							<TextInput
+								placeholder='Email'
+								value={values.email}
+								onChangeText={handleChange('email')}
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.email}</Text>}</Text>
+							<TextInput
+								placeholder='Confirm Email'
+								value={values.confirmEmail}
+								onChangeText={handleChange('confirmEmail')}
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.confirmEmail}</Text>}</Text>
+							<TextInput
+								placeholder='User id'
+								maxLength={5}
+								value={values.userId}
+								onChangeText={handleChange('userId')}
+								keyboardType='number-pad'
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.userId}</Text>}</Text>
+							<TextInput
+								placeholder='Role'
+								value={values.role}
+								onChangeText={handleChange('role')}
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.role}</Text>}</Text>
+							<TextInput
+								placeholder='Location'
+								value={values.location}
+								onChangeText={handleChange('location')}
+								style={styles.input}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.location}</Text>}</Text>
+							<TextInput
+								placeholder='Password'
+								value={values.password}
+								onChangeText={handleChange('password')}
+								secureTextEntry={true}
+								style={styles.input}
+								autoCapitalize={'none'}
+							/>
+							
+							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.password}</Text>}</Text>
+							<TextInput
+								placeholder='Confirm Password'
+								value={values.confirmPassword}
+								onChangeText={handleChange('confirmPassword')}
+								secureTextEntry={true}
+								style={styles.input}
+								autoCapitalize={'none'}
+							/>
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.confirmPassword}</Text>}
+							</Text>
+							<CustomButton text='Register User' onPress={handleSubmit} />
+							<CustomButton text='Back to Login' onPress={goToLogin} type='SECONDARY' />
+						</View>
+					)}
+				</Formik>
+						
+			</ScrollView>
+		</Container>
 	);
 };
 
 export default Register;
 
 const styles = StyleSheet.create({
-	container: {
-		height: '100%',
-		width: '100%',
-		justifyContent: 'center',
-	},
-
-	button: {
-		backgroundColor: 'green',
-		padding: 15,
-		borderRadius: 5,
-		height: 50,
-		width: 200,
-		marginVertical: 20,
-		alignSelf: 'center',
-	},
-	secondaryButton: {
-		height: 50,
-		width: 200,
-		borderColor: 'black',
-		borderWidth: 1,
-		borderRadius: 5,
-		textAlign: 'center',
-		padding: 15,
-		alignSelf: 'center',
-	},
-	secondaryText: {
-		color: 'black',
-		alignSelf: 'center',
-	},
-	text: {
-		alignSelf: 'center',
-		color: 'white',
-	},
 	errorMessage: {
 		marginVertical: 10,
 		alignSelf: 'center',
 		color: 'red',
+	},
+	input: {
+		borderBottomColor: 'black',
+		borderBottomWidth: 1,
+		padding: 5,
+		marginVertical: 5,
+		width: '85%',
+		alignSelf: 'center',
 	},
 	errorMsg: {
 		alignSelf: 'flex-start',
@@ -259,14 +230,7 @@ const styles = StyleSheet.create({
 		marginVertical: 5,
 		marginLeft: 50,
 	},
-	input: {
-		borderBottomColor: 'black',
-		borderBottomWidth: 1,
-		padding: 10,
-		marginVertical: 5,
-		width: '75%',
-		alignSelf: 'center',
-	},
+	
 	AI: {
 		height: '100%',
 		justifyContent: 'center',
