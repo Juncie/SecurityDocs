@@ -2,23 +2,30 @@ import React from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { GlobalStyles } from '../../styles/GlobalStyles';
 
-const CustomButton = ({ text, onPress, type = 'PRIMARY', mode = 'LIGHT', bgColor, fgColor}) => {
+const CustomButton = ({
+	text,
+	onPress,
+	type = 'PRIMARY',
+	bgColor,
+	fgColor,
+}) => {
 	return (
 		<TouchableOpacity
-			style={styles.container}
 			onPress={onPress}
 			text={text}
 			style={[
-				styles.container, 
-				styles[`container_${type}_${mode}`],
-				bgColor ? {backgroundColor: bgColor} : {}
+				styles.container,
+				styles[`container_${type}`],
+				bgColor ? { backgroundColor: bgColor } : {},
 			]}
 		>
-			<Text style={[
-				styles.text, 
-				styles[`text_${mode}`],
-				fgColor ? {color: fgColor} : {}
-			]}>
+			<Text
+				style={[
+					styles.text,
+					styles[`text_${type}`],
+					fgColor ? { color: fgColor } : {},
+				]}
+			>
 				{text}
 			</Text>
 		</TouchableOpacity>
@@ -35,40 +42,31 @@ const styles = StyleSheet.create({
 		marginTop: 10,
 		alignSelf: 'center',
 	},
-	container_PRIMARY_LIGHT: {
+	container_PRIMARY: {
 		backgroundColor: GlobalStyles.primary,
 	},
-	container_PRIMARY_DARK: {
-		backgroundColor: GlobalStyles.primary,
-	},
-	container_SECONDARY_LIGHT: {
-		borderColor: 'black',
-		borderWidth: 1,
+
+	container_SECONDARY: {
+		borderColor: GlobalStyles.primary,
+		borderWidth: 2,
 		borderRadius: 5,
 		textAlign: 'center',
 		alignSelf: 'center',
 	},
-	container_SECONDARY_DARK: {
-		backgroundColor: GlobalStyles.secondry,
-	},
-	contianer_TERTIARY_LIGHT: {
-		borderColor: GlobalStyles.primary,
-		borderWidth: 1,
-		backgroundColor: GlobalStyles.primary,
-	},
-	contianer_TERTIARY_DARK: {
-		borderColor: GlobalStyles.primary,
-		borderWidth: 1,
-	},
-	
+
+	container_TERTIARY: {},
+
 	text: {
 		fontWeight: 'bold',
 		textAlign: 'center',
 	},
-	text_LIGHT: {
-		color: 'white',
+	text_PRIMARY: {
+		color: GlobalStyles.white,
 	},
-	text_DARK: {
-		color: '#010101',
+	text_SECONDARY: {
+		color: GlobalStyles.black,
+	},
+	text_TERTIARY: {
+		color: GlobalStyles.tertiary,
 	},
 });

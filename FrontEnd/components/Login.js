@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import {
+	StyleSheet,
+	Text,
+	TextInput,
+	View,
+	SafeAreaView,
+	Alert,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -18,22 +25,22 @@ const Login = () => {
 	const navigation = useNavigation();
 
 	const handleLogin = async () => {
-		if (!userId || !password) {
-			setError('Please provide a login and password.');
-			setTimeout(() => setError(''), 5000);
-		}
-		try {
-			let res = await dbActions.login({ userId, password });
-			console.log(res);
-		} catch (error) {
-			setError(error.message);
-			console.log(error.message);
-			setTimeout(() => setError(''), 5000);
+		if (userId.length < 5 || password.length < 5) {
+			Alert.alert('Warning!', 'Please provide a valid username and password.');
+		} else {
+			try {
+				let res = await dbActions.login({ userId, password });
+				AsyncStorage.setItem('authToken', res.data.token);
+				setUser(res.data.user);
+			} catch (error) {
+				setError('Invalid Credentials');
+				setTimeout(() => setError(''), 5000);
+			}
 		}
 	};
 
 	return (
-		<Container>
+		<Container style={styles.loginContainer}>
 			<Text style={styles.errorMessage}>{error && <Text>{error}</Text>}</Text>
 			<View style={styles.inputSection}>
 				<CustomInput
@@ -47,13 +54,9 @@ const Login = () => {
 					setValue={setPassword}
 					secureTextEntry={true}
 				/>
-				<CustomButton text='Login' onPress={handleLogin} />
-				<CustomButton
-					text='Register'
-					type='SECONDARY'
-					onPress={() => navigation.navigate('Register')}
-				/>
-				<CustomButton text='Home' onPress={() => navigation.navigate('Home')} />
+				<CustomButton text='Login' onPress={handleLogin} type='SECONDARY' />
+				<CustomButton text='Forgot Password' type='TERTIARY' />
+				<CustomButton onPress={() => navigation.navigate('Register')} />
 			</View>
 		</Container>
 	);
@@ -62,6 +65,9 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
+	loginContainer: {
+		alignItems: 'center',
+	},
 	inputSection: {
 		alignContent: 'center',
 		height: '80%',

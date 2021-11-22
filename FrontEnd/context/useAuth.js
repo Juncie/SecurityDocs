@@ -13,6 +13,13 @@ export const AuthProvider = ({ children }) => {
 	const [loadingInitial, setLoadingInitial] = useState(true);
 	const [loading, setLoading] = useState(false);
 
+	const getUser = async () => {
+		const id = AsyncStorage.getItem('token');
+		let res = await dbActions.getUser(id);
+		setUser(res.data);
+		console.log(`User`, user);
+	};
+
 	useEffect(() => {
 		if (user) {
 			setUser(user);
@@ -36,6 +43,7 @@ export const AuthProvider = ({ children }) => {
 				loading,
 				setLoading,
 				logout,
+				getUser,
 			}}
 		>
 			{loadingInitial ? (

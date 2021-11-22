@@ -1,20 +1,27 @@
-import React from 'react'
-import { Keyboard, SafeAreaView, StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
+import React from 'react';
+import {
+	Keyboard,
+	SafeAreaView,
+	StyleSheet,
+	Text,
+	TouchableWithoutFeedback,
+	View,
+} from 'react-native';
 
-export default function Container({children}) {
-    return (
-        <TouchableWithoutFeedback style={styles.container} onPress={Keyboard.dismiss}>
-            <SafeAreaView>
-                {children}
-            </SafeAreaView>
-        </TouchableWithoutFeedback>
-    )
-}
+const Container = ({ style, children }) => {
+	return (
+		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+			<SafeAreaView style={[styles.container, style]}>{children}</SafeAreaView>
+		</TouchableWithoutFeedback>
+	);
+};
 
 const styles = StyleSheet.create({
-    container: {
+	container: {
 		height: '100%',
 		width: '100%',
 		justifyContent: 'center',
 	},
-})
+});
+
+export default Container;

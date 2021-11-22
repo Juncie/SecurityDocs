@@ -10,12 +10,12 @@ const serverUrl =
 console.log(serverUrl);
 
 export default dbActions = {
+	getUser: async () => await axios.get(`${serverUrl}/getUser`),
 	login: async ({ userId, password }) => {
 		let res = await axios.post(`${serverUrl}/login`, { userId, password });
-		console.log(res);
+		console.log(res.data);
 		AsyncStorage.setItem('token', res.data.token);
 		return res;
 	},
 	register: async profile => await axios.post(`${serverUrl}/register`, profile),
-	getUser: async () => await axios.get(`${serverUrl}/getuser`),
 };

@@ -37,10 +37,11 @@ exports.login = async (req, res, next) => {
 			return next(new ErrorResponse('Invalid User', 400));
 		}
 		const isMatch = await user.matchPassword(password);
+
 		if (!isMatch) {
 			return next(new ErrorResponse('User not found', 401));
 		}
-		console.log(`user`, user);
+		console.log(`USER`, user);
 		sendToken(user, 200, res);
 		console.log('Token Sent!');
 	} catch (error) {
@@ -127,9 +128,10 @@ exports.resetPassword = async (req, res, next) => {
 };
 
 exports.getUser = async (req, res, next) => {
+	const { id } = req.body;
 	try {
-		let user = await User.findById(res.locals.user._id);
-		res.status(200).json(user);
+		let user = await User.findById({ _id: id });
+		sendToken(user, 200, res);
 	} catch (error) {
 		res.status(404).json({ message: 'User not found' });
 	}
@@ -137,5 +139,5 @@ exports.getUser = async (req, res, next) => {
 
 const sendToken = (user, statusCode, res, message) => {
 	const token = user.getSignedJWT();
-	res.status(statusCode).json({ success: true, token, message });
+	res.status(statusCode).json({ success: true, token, message, user });
 };
