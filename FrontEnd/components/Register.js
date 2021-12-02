@@ -17,7 +17,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Container from './custom/CustomContainer';
 import CustomButton from './custom/CustomButton';
-import CustomInput from './custom/CustomInput';
+import LoadView from './custom/CustomLoader';
 
 const Register = () => {
 	const { error, setError, loading, setLoading } = useAuth();
@@ -35,14 +35,22 @@ const Register = () => {
 		confirmPassword: '',
 	};
 
-	const LoadView = ActivityIndicator;
 	const navigation = useNavigation();
 	const goToLogin = () => navigation.navigate('Login');
 
 	const validationSchema = yup.object().shape({
-		first: yup.string().min(2, 'First name is too short').required('First name is required'),
-		last: yup.string().min(2, 'Last name is too short').required('Last name is required'),
-		email: yup.string().email('Email is not a valid.').required('Email is required'),
+		first: yup
+			.string()
+			.min(2, 'First name is too short')
+			.required('First name is required'),
+		last: yup
+			.string()
+			.min(2, 'Last name is too short')
+			.required('Last name is required'),
+		email: yup
+			.string()
+			.email('Email is not a valid.')
+			.required('Email is required'),
 		confirmEmail: yup
 			.string()
 			.required('Please confirm your email address.')
@@ -50,9 +58,15 @@ const Register = () => {
 		userId: yup.string().min(5, 'User ID must be at least 5 characters long.'),
 		role: yup
 			.string()
-			.oneOf(['Manager', 'manager', 'Admin', 'admin', 'User', 'user'], 'Invalid role')
+			.oneOf(
+				['Manager', 'manager', 'Admin', 'admin', 'User', 'user'],
+				'Invalid role'
+			)
 			.required('Role is required'),
-		location: yup.string().oneOf(['Wittmann', 'Mesa', 'Tempe']).required('Location is required'),
+		location: yup
+			.string()
+			.oneOf(['Wittmann', 'Mesa', 'Tempe'])
+			.required('Location is required'),
 		password: yup
 			.string()
 			.required('Password is required')
@@ -66,32 +80,33 @@ const Register = () => {
 	const validate = async () => {
 		const validateResult = await validationSchema
 			.validate(validationSchema, { abortEarly: false })
-			.catch((err) => {
+			.catch(err => {
 				setShowErr(true);
 				setTimeout(() => setShowErr(false), 15000);
 			});
 		return validateResult;
 	};
 
-	const handleSubmit = async (profile) => {
+	const handleSubmit = async profile => {
 		setLoading(true);
 		profile.confirmPassword = undefined;
 		profile.confirmEmail = undefined;
-		console.log(profile);
 		try {
 			setLoading(false);
 			setShowErr(false);
-			const { data } = await dbActions.register(profile);
-			AsyncStorage.setItem('authToken', data.token);
+			const { data } = await actions.register(profile);
 			Alert.alert(
 				`${profile.first} is now an authorizied ${profile.role}`,
-				'Would you like to create another user?',
+				'Would you like to create another profile?',
 				[
 					{
 						text: 'Create another user',
 						style: 'cancel',
 					},
-					{ text: 'Back to Login', onPress: () => navigation.navigate('Login') },
+					{
+						text: 'Back to Login',
+						onPress: () => navigation.navigate('Login'),
+					},
 				]
 			);
 		} catch (err) {
@@ -103,7 +118,7 @@ const Register = () => {
 		}
 	};
 
-	if (loading) return <LoadView size='large' color='green' style={styles.AI} />;
+	if (loading) return <LoadView />;
 
 	return (
 		<Container>
@@ -124,32 +139,40 @@ const Register = () => {
 								onChangeText={handleChange('first')}
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.first}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.first}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Last'
 								value={values.last}
 								onChangeText={handleChange('last')}
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.last}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.last}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Email'
 								value={values.email}
 								onChangeText={handleChange('email')}
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.email}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.email}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Confirm Email'
 								value={values.confirmEmail}
 								onChangeText={handleChange('confirmEmail')}
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.confirmEmail}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.confirmEmail}</Text>}
+							</Text>
 							<TextInput
 								placeholder='User id'
 								maxLength={5}
@@ -158,24 +181,30 @@ const Register = () => {
 								keyboardType='number-pad'
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.userId}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.userId}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Role'
 								value={values.role}
 								onChangeText={handleChange('role')}
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.role}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.role}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Location'
 								value={values.location}
 								onChangeText={handleChange('location')}
 								style={styles.input}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.location}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.location}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Password'
 								value={values.password}
@@ -184,8 +213,10 @@ const Register = () => {
 								style={styles.input}
 								autoCapitalize={'none'}
 							/>
-							
-							<Text style={styles.errorMsg}>{showErr && <Text>{errors?.password}</Text>}</Text>
+
+							<Text style={styles.errorMsg}>
+								{showErr && <Text>{errors?.password}</Text>}
+							</Text>
 							<TextInput
 								placeholder='Confirm Password'
 								value={values.confirmPassword}
@@ -198,11 +229,14 @@ const Register = () => {
 								{showErr && <Text>{errors?.confirmPassword}</Text>}
 							</Text>
 							<CustomButton text='Register User' onPress={handleSubmit} />
-							<CustomButton text='Back to Login' onPress={goToLogin} type='SECONDARY' />
+							<CustomButton
+								text='Back to Login'
+								onPress={goToLogin}
+								type='SECONDARY'
+							/>
 						</View>
 					)}
 				</Formik>
-						
 			</ScrollView>
 		</Container>
 	);
@@ -227,13 +261,7 @@ const styles = StyleSheet.create({
 	errorMsg: {
 		alignSelf: 'flex-start',
 		color: 'red',
-		marginVertical: 5,
+		marginVertical: 3,
 		marginLeft: 50,
-	},
-	
-	AI: {
-		height: '100%',
-		justifyContent: 'center',
-		alignItems: 'center',
 	},
 });

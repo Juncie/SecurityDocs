@@ -1,6 +1,3 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-
 export const GlobalStyles = {
 	primary: '#009E1A',
 	secondary: '#101010',

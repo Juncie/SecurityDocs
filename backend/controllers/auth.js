@@ -3,6 +3,15 @@ const User = require('../models/User');
 const ErrorResponse = require('../utils/errorRes');
 const sendEmail = require('../utils/sendEmail');
 
+exports.getUser = async (req, res, next) => {
+	try {
+		const user = await User.findById(res.locals.user._id);
+		sendToken(user, 200, res);
+	} catch (err) {
+		next(new ErrorResponse(`Error fetching user: ${err}`, 500));
+	}
+};
+
 exports.register = async (req, res, next) => {
 	const { first, last, email, userId, role, location, password } = req.body;
 	try {
@@ -25,7 +34,6 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
 	const { userId, password } = req.body;
-	console.log(req.body);
 
 	if (!userId || !password) {
 		return next(new ErrorResponse('Please provide a User ID & Password', 400));
@@ -41,11 +49,8 @@ exports.login = async (req, res, next) => {
 		if (!isMatch) {
 			return next(new ErrorResponse('User not found', 401));
 		}
-		console.log(`USER`, user);
 		sendToken(user, 200, res);
-		console.log('Token Sent!');
 	} catch (error) {
-		console.log(`error`, error.message);
 		next(new ErrorResponse(`${error.message}`, 500));
 	}
 };
@@ -124,16 +129,6 @@ exports.resetPassword = async (req, res, next) => {
 		});
 	} catch (error) {
 		next(error);
-	}
-};
-
-exports.getUser = async (req, res, next) => {
-	const { id } = req.body;
-	try {
-		let user = await User.findById({ _id: id });
-		sendToken(user, 200, res);
-	} catch (error) {
-		res.status(404).json({ message: 'User not found' });
 	}
 };
 

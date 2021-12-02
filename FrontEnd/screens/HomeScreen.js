@@ -1,14 +1,14 @@
 import React from 'react';
-import { View, Text} from 'react-native';
-const Home = () => {
-    return (
-        <View>
-            <Text>
-                Home
-            </Text>
-        </View>
-    );
-}
+import { View, Text } from 'react-native';
 
-export default Home;
+import Home from '../components/Home';
 
+const HomeScreen = () => {
+	return (
+		<View>
+			<Home />
+		</View>
+	);
+};
+
+export default HomeScreen;

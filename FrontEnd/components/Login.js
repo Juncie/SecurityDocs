@@ -1,43 +1,57 @@
 import React, { useEffect, useState } from 'react';
-import {
-	StyleSheet,
-	Text,
-	TextInput,
-	View,
-	SafeAreaView,
-	Alert,
-} from 'react-native';
+import { StyleSheet, Text, View, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import dbActions from '../api/api';
+import actions from '../api/api';
 import useAuth from '../context/useAuth';
 import CustomInput from './custom/CustomInput';
 import CustomButton from './custom/CustomButton';
 import Container from './custom/CustomContainer';
-import { GlobalStyles } from '../styles/GlobalStyles';
+import LoadView from './custom/CustomLoader';
 
 const Login = () => {
-	const { setUser, error, setError } = useAuth();
+	const { setUser, error, setError, loading, setLoading, authToken } =
+		useAuth();
 	const [userId, setUserId] = useState('');
 	const [password, setPassword] = useState('');
-
+	const [loginError, setLoginError] = useState('');
+	const [isHidden, setIsHidden] = useState(true);
 	const navigation = useNavigation();
 
-	const handleLogin = async () => {
-		if (userId.length < 5 || password.length < 5) {
-			Alert.alert('Warning!', 'Please provide a valid username and password.');
-		} else {
-			try {
-				let res = await dbActions.login({ userId, password });
-				AsyncStorage.setItem('authToken', res.data.token);
-				setUser(res.data.user);
-			} catch (error) {
-				setError('Invalid Credentials');
-				setTimeout(() => setError(''), 5000);
-			}
+	useEffect(() => {
+		if (loginError) {
+			Alert.alert('Error', loginError);
+			setLoginError('');
 		}
+	}, [loginError]);
+
+	const handleLogin = async () => {
+		setLoading(true);
+
+		if (userId < 1 || password < 1) {
+			setLoading(false);
+			setLoginError('Please enter a valid user id and password');
+			return;
+		}
+		try {
+			let { data } = await actions.login(userId, password);
+
+			if (data.success) {
+				setUser(data.user);
+				setLoading(false);
+				setUserId('');
+				setPassword('');
+			}
+		} catch (err) {
+			setLoginError(err.message);
+		}
+		setLoading(false);
 	};
+
+	if (loading) {
+		return <LoadView />;
+	}
 
 	return (
 		<Container style={styles.loginContainer}>
@@ -52,7 +66,7 @@ const Login = () => {
 					placeholder='Password'
 					value={password}
 					setValue={setPassword}
-					secureTextEntry={true}
+					secureTextEntry={isHidden}
 				/>
 				<CustomButton text='Login' onPress={handleLogin} type='SECONDARY' />
 				<CustomButton text='Forgot Password' type='TERTIARY' />

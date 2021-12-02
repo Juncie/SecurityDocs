@@ -1,43 +1,68 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { reloadAsync } from 'expo-updates';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ActivityIndicator, StyleSheet } from 'react-native';
-import { set } from 'react-native-reanimated';
 
-import dbActions from '../api/api';
+import actions from '../api/api';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
 	const [user, setUser] = useState(null);
+	const [authToken, setAuthToken] = useState(null);
 	const [error, setError] = useState('');
-	const [loadingInitial, setLoadingInitial] = useState(true);
+	const [loadingInitial, setLoadingInitial] = useState(false);
 	const [loading, setLoading] = useState(false);
 
+	const logout = async () => {
+		setLoadingInitial(true);
+		try {
+			await AsyncStorage.removeItem('token');
+			await AsyncStorage.removeItem('user');
+			setUser(null);
+			setAuthToken(null);
+			setLoadingInitial(false);
+			console.log(`Successfully logged out`);
+		} catch (error) {
+			console.log(`Error logging out: ${error.message}`);
+			setLoadingInitial(false);
+		}
+	};
+
+	const getToken = async () => {
+		try {
+			const token = await AsyncStorage.getItem('token');
+			if (token !== null) {
+				setAuthToken(token);
+			}
+		} catch (error) {
+			console.log(`Error getting token: ${error.message}`);
+		}
+	};
+
 	const getUser = async () => {
-		const id = AsyncStorage.getItem('token');
-		let res = await dbActions.getUser(id);
-		setUser(res.data);
-		console.log(`User`, user);
+		try {
+			const user = await AsyncStorage.getItem('user');
+			if (user !== null) {
+				setUser(JSON.parse(user));
+			}
+		} catch (error) {
+			console.log(`Error getting user: ${error.message}`);
+		}
 	};
 
 	useEffect(() => {
-		if (user) {
-			setUser(user);
-		} else {
-			setUser(null);
-		}
-		setLoadingInitial(false);
-	}, []);
-
-	const logout = async () => {
-		setUser(null);
-	};
+		getToken();
+		getUser();
+	}, [user, authToken]);
 
 	return (
 		<AuthContext.Provider
 			value={{
 				user,
 				setUser,
+				authToken,
+				setAuthToken,
 				error,
 				setError,
 				loading,
