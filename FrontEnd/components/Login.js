@@ -11,8 +11,15 @@ import Container from './custom/CustomContainer';
 import LoadView from './custom/CustomLoader';
 
 const Login = () => {
-	const { setUser, error, setError, loading, setLoading, authToken } =
-		useAuth();
+	const {
+		setUser,
+		error,
+		setError,
+		loading,
+		setLoading,
+		setAuthToken,
+		getUser,
+	} = useAuth();
 	const [userId, setUserId] = useState('');
 	const [password, setPassword] = useState('');
 	const [loginError, setLoginError] = useState('');
@@ -34,14 +41,13 @@ const Login = () => {
 			setLoginError('Please enter a valid user id and password');
 			return;
 		}
+		let res = await actions.login(userId, password);
 		try {
-			let { data } = await actions.login(userId, password);
-
-			if (data.success) {
-				setUser(data.user);
+			if (res.success) {
 				setLoading(false);
 				setUserId('');
 				setPassword('');
+				getUser();
 			}
 		} catch (err) {
 			setLoginError(err.message);

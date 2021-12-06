@@ -5,7 +5,7 @@ const sendEmail = require('../utils/sendEmail');
 
 exports.getUser = async (req, res, next) => {
 	try {
-		const user = await User.findById(res.locals.user._id);
+		const user = await User.findById(res.locals.user.id);
 		sendToken(user, 200, res);
 	} catch (err) {
 		next(new ErrorResponse(`Error fetching user: ${err}`, 500));

@@ -6,10 +6,10 @@ import AuthStack from './AuthStack';
 import HomeStack from './HomeStack';
 
 const AppStack = ({ navigation }) => {
-	const { user } = useAuth();
+	const { user, authToken } = useAuth();
 	return (
 		<NavigationContainer>
-			{!user ? <AuthStack /> : <HomeStack />}
+			{!authToken ? <AuthStack /> : <HomeStack />}
 		</NavigationContainer>
 	);
 };

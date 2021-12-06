@@ -24,12 +24,13 @@ export default actions = {
 			userId,
 			password,
 		});
-		if (data.status === 200) {
+		if (data) {
+			console.log(data);
 			let token = data.token;
 			let user = data.user;
 			await AsyncStorage.setItem('token', token);
 			await AsyncStorage.setItem('user', JSON.stringify(user));
-			return res;
 		}
+		return data;
 	},
 };

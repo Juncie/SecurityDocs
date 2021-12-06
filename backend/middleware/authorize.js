@@ -7,7 +7,7 @@ exports.authorize = async (req, res, next) => {
 	if (token) {
 		jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
 			if (!err) {
-				User.findById(data.user._id)
+				User.findById(data.user.id)
 					.then(user => {
 						if (user) {
 							res.locals.user = user;

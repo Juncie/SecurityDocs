@@ -14,21 +14,6 @@ export const AuthProvider = ({ children }) => {
 	const [loadingInitial, setLoadingInitial] = useState(false);
 	const [loading, setLoading] = useState(false);
 
-	const logout = async () => {
-		setLoadingInitial(true);
-		try {
-			await AsyncStorage.removeItem('token');
-			await AsyncStorage.removeItem('user');
-			setUser(null);
-			setAuthToken(null);
-			setLoadingInitial(false);
-			console.log(`Successfully logged out`);
-		} catch (error) {
-			console.log(`Error logging out: ${error.message}`);
-			setLoadingInitial(false);
-		}
-	};
-
 	const getToken = async () => {
 		try {
 			const token = await AsyncStorage.getItem('token');
@@ -55,6 +40,21 @@ export const AuthProvider = ({ children }) => {
 		getToken();
 		getUser();
 	}, [user, authToken]);
+
+	const logout = async () => {
+		setLoadingInitial(true);
+		try {
+			await AsyncStorage.removeItem('token');
+			await AsyncStorage.removeItem('user');
+			setUser(null);
+			setAuthToken(null);
+			setLoadingInitial(false);
+			console.log(`Successfully logged out`);
+		} catch (error) {
+			console.log(`Error logging out: ${error.message}`);
+			setLoadingInitial(false);
+		}
+	};
 
 	return (
 		<AuthContext.Provider
