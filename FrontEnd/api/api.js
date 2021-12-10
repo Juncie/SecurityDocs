@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 // console.log(process.env);
 
 const serverUrl =
-	process.env.NODE_ENV === 'production' ? '' : `http://localhost:5000/api/auth`;
+	process.env.NODE_ENV === 'production' ? '' : `http://localhost:5000/api`;
 
 // console.log(serverUrl);
 
@@ -17,19 +17,24 @@ const createHeaders = () => {
 };
 
 export default actions = {
-	getUser: async () => await axios.get(`${serverUrl}/getuser`, createHeaders()),
-	register: async profile => await axios.post(`${serverUrl}/register`, profile),
+	getUser: async () =>
+		await axios.get(`${serverUrl}/auth/getuser`, createHeaders()),
+	register: async profile =>
+		await axios.post(`${serverUrl}/auth/register`, profile),
 	login: async (userId, password) => {
-		const { data } = await axios.post(`${serverUrl}/login`, {
+		const { data } = await axios.post(`${serverUrl}/auth/login`, {
 			userId,
 			password,
 		});
-		if (data) {
-			console.log(data);
-			let token = data.token;
-			let user = data.user;
-			await AsyncStorage.setItem('token', token);
-			await AsyncStorage.setItem('user', JSON.stringify(user));
+		try {
+			if (data) {
+				let token = data.token;
+				let user = data.user;
+				await AsyncStorage.setItem('token', token);
+				await AsyncStorage.setItem('user', JSON.stringify(user));
+			}
+		} catch (e) {
+			console.log(e.message);
 		}
 		return data;
 	},

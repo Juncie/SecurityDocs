@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { getPrivateData } = require('../controllers/private');
+const {
+	getPrivateData,
+	newSAR,
+	newSarEntry,
+} = require('../controllers/private');
 const { authorize } = require('../middleware/authorize');
 
-router.route('/').get(authorize, getPrivateData);
+router.get('/', authorize, getPrivateData);
+router.post('/newsar', authorize, newSAR);
+router.post('/newsarentry/:sarId', authorize, newSarEntry);
 
 module.exports = router;

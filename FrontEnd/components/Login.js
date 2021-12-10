@@ -27,6 +27,7 @@ const Login = () => {
 	const navigation = useNavigation();
 
 	useEffect(() => {
+		setLoading(false);
 		if (loginError) {
 			Alert.alert('Error', loginError);
 			setLoginError('');
@@ -36,7 +37,7 @@ const Login = () => {
 	const handleLogin = async () => {
 		setLoading(true);
 
-		if (userId < 1 || password < 1) {
+		if (userId < 5 || password < 5) {
 			setLoading(false);
 			setLoginError('Please enter a valid user id and password');
 			return;
@@ -50,12 +51,15 @@ const Login = () => {
 				getUser();
 			}
 		} catch (err) {
+			setLoading(false);
 			setLoginError(err.message);
 		}
-		setLoading(false);
 	};
 
 	if (loading) {
+		setTimeout(() => {
+			setLoading(false);
+		}, 2000);
 		return <LoadView />;
 	}
 

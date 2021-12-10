@@ -6,7 +6,12 @@ const sendEmail = require('../utils/sendEmail');
 exports.getUser = async (req, res, next) => {
 	try {
 		const user = await User.findById(res.locals.user.id);
-		sendToken(user, 200, res);
+		sendToken({
+			user,
+			statusCode: 200,
+			res,
+			message: 'User Successfully Retrieved!',
+		});
 	} catch (err) {
 		next(new ErrorResponse(`Error fetching user: ${err}`, 500));
 	}
@@ -134,5 +139,7 @@ exports.resetPassword = async (req, res, next) => {
 
 const sendToken = (user, statusCode, res, message) => {
 	const token = user.getSignedJWT();
+	console.log(`Token`, token);
+	console.log(`user`, user);
 	res.status(statusCode).json({ success: true, token, message, user });
 };

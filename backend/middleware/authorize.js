@@ -4,10 +4,11 @@ const User = require('../models/User');
 
 exports.authorize = async (req, res, next) => {
 	let token = req.headers.authorization.split(' ')[1];
+	console.log(`Token: ${token}`);
 	if (token) {
 		jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
 			if (!err) {
-				User.findById(data.user.id)
+				User.findById({ _id: data.id })
 					.then(user => {
 						if (user) {
 							res.locals.user = user;
@@ -17,10 +18,10 @@ exports.authorize = async (req, res, next) => {
 						}
 					})
 					.catch(err => {
-						next(new ErrorResponse(err, 500));
+						next(new ErrorResponse(err.message, 500));
 					});
 			} else {
-				next(new ErrorResponse(err, 401));
+				next(new ErrorResponse(err.message, 401));
 			}
 		});
 	} else {
