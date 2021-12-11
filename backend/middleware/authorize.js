@@ -4,7 +4,6 @@ const User = require('../models/User');
 
 exports.authorize = async (req, res, next) => {
 	let token = req.headers.authorization.split(' ')[1];
-	console.log(`Token: ${token}`);
 	if (token) {
 		jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
 			if (!err) {
@@ -12,6 +11,7 @@ exports.authorize = async (req, res, next) => {
 					.then(user => {
 						if (user) {
 							res.locals.user = user;
+							res.locals.role = user.role;
 							next();
 						} else {
 							next(new ErrorResponse('User not found', 401));

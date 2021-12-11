@@ -2,6 +2,8 @@ const crypto = require('crypto');
 const User = require('../models/User');
 const ErrorResponse = require('../utils/errorRes');
 const sendEmail = require('../utils/sendEmail');
+const sendToken = require('../utils/sendToken');
+//if sendtoken isn't working, return function to bottom of this sheet.
 
 exports.getUser = async (req, res, next) => {
 	try {
@@ -135,11 +137,4 @@ exports.resetPassword = async (req, res, next) => {
 	} catch (error) {
 		next(error);
 	}
-};
-
-const sendToken = (user, statusCode, res, message) => {
-	const token = user.getSignedJWT();
-	console.log(`Token`, token);
-	console.log(`user`, user);
-	res.status(statusCode).json({ success: true, token, message, user });
 };
