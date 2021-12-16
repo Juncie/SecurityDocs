@@ -1,4 +1,3 @@
-const SarEntry = require('../models/SAR/SarEntry');
 const SAR = require('../models/SAR/SAR');
 const ErrorResponse = require('../utils/errorRes');
 const ObjectId = require('mongodb').ObjectId;
@@ -96,11 +95,14 @@ exports.newSarEntry = async (req, res, next) => {
 exports.updateSarEntry = async (req, res, next) => {
 	let { id, entryId } = req.params;
 	let { value, updateType } = req.body;
-	console.log(`updateSarEntry`, id, entryId, value, updateType);
 
-	if (updateType === 'edit' || !updateType) {
+	const sar = await SAR.findOne({ _id: id });
+
+	if (sar.status.toLowerCase() === 'submitted')
+		return next(new ErrorResponse(`SAR already submitted`, 400));
+
+	if (!updateType) {
 		try {
-			const sar = await SAR.findOne({ _id: id });
 			sar.markModified('entries');
 			sar.entries.map(entry => {
 				if (entry.entryId == entryId) {
@@ -116,11 +118,13 @@ exports.updateSarEntry = async (req, res, next) => {
 
 	if (updateType === 'delete') {
 		try {
-			let sar = SAR.findOneAndUpdate(
-				{ _id: id },
-				{ $pull: { entries: { entryId } } },
-				{ new: true }
-			);
+			sar.markModified('entries');
+			sar.entries.map(entry => {
+				if (entry.entryId == entryId) {
+					sar.entries.splice(sar.entries.indexOf(entry), 1);
+				}
+			});
+			await sar.save();
 			res.status(200).json({ success: true, sar });
 		} catch (err) {
 			return next(new ErrorResponse(`${err.message}`, 400));
@@ -136,14 +140,10 @@ exports.submitSar = async (req, res, next) => {
 	try {
 		let sar = await SAR.findById(req.params.sarId);
 		if (!sar) return next(new ErrorResponse(`SAR not found`, 404));
-
 		sar.status = 'Submitted';
 		await sar.save();
-		res.status(200).json({
-			success: true,
-			data: sar,
-		});
+		res.status(200).json({ success: true, sar });
 	} catch (err) {
-		return next(new ErrorResponse(`${err.message}`, 400));
+		return next(new ErrorResponse(err, 400));
 	}
 };

@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const URI = process.env.MONGODB_URI || 'mongodb://localhost/LocalGDK';
-console.log(`URI`, URI);
 const connectDB = async () => {
 	await mongoose
 		.connect(URI, { useNewUrlParser: true, useUnifiedTopology: true })
