@@ -4,10 +4,7 @@ const ObjectId = require('mongodb').ObjectId;
 const sendToken = require('../utils/sendToken');
 
 exports.getPrivateData = (req, res, next) => {
-	res.status(200).json({
-		success: true,
-		data: "You've got access",
-	});
+	res.status(200).json({ success: true, data: 'This is private data' });
 };
 
 exports.getSAR = async (req, res, next) => {
@@ -50,13 +47,8 @@ exports.findAllSARs = async (req, res, next) => {
 };
 
 exports.newSAR = async (req, res, next) => {
-	let sar = new SAR(req.body);
-	let newSarDate = new Date();
-	sar.userId = res.locals.user.userId;
-	sar.date = newSarDate.toDateString();
-
 	try {
-		await sar.save();
+		new SAR(req.body);
 		res.status(200).json({ success: true, sar });
 	} catch (err) {
 		return next(new ErrorResponse(`${err.message}`, 400));
@@ -98,7 +90,7 @@ exports.updateSarEntry = async (req, res, next) => {
 
 	const sar = await SAR.findOne({ _id: id });
 
-	if (sar.status.toLowerCase() === 'submitted')
+	if (sar.status === 'Submitted')
 		return next(new ErrorResponse(`SAR already submitted`, 400));
 
 	if (!updateType) {
@@ -133,7 +125,7 @@ exports.updateSarEntry = async (req, res, next) => {
 };
 
 exports.submitSar = async (req, res, next) => {
-	let { userId, sarId } = req.body;
+	let { sarId } = req.params;
 	userId = res.locals.user._id;
 	sarId = req.params.sarId;
 
