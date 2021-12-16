@@ -20,7 +20,7 @@ router.get('/getsar/:sarId', authorize, getSAR);
 router.post('/findallsars', authorize, findAllSARs);
 router.post('/newsar', authorize, newSAR);
 router.post('/newsarentry/:sarId', authorize, newSarEntry);
-router.post('/updatesarentry/:sarId/:entryId', authorize, updateSarEntry); //updateType: 'update' or 'delete'
+router.post('/updatesarentry/:id/:entryId', authorize, updateSarEntry); //updateType: 'update' or 'delete'
 router.post('/submitsar/:sarId', authorize, submitSar);
 
 module.exports = router;
