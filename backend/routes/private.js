@@ -11,16 +11,18 @@ const {
 	getSAR,
 	findAllSARs,
 	updateSarEntry,
+	deleteSAR,
 } = require('../controllers/private');
 
 router.get('/', authorize, getPrivateData);
 
 // SAR
-router.get('/getsar/:sarId', authorize, getSAR);
-router.post('/findallsars', authorize, findAllSARs);
+router.get('/getsar/:id', authorize, getSAR);
+router.post('/findallsars', authorize, checkRole, findAllSARs);
 router.post('/newsar', authorize, newSAR);
-router.post('/newsarentry/:sarId', authorize, newSarEntry);
-router.post('/updatesarentry/:id/:entryId', authorize, updateSarEntry); //updateType: 'update' or 'delete'
-router.post('/submitsar/:sarId', authorize, submitSar);
+router.post('/newsarentry/:id', authorize, newSarEntry);
+router.post('/updatesarentry/:id/:entryid', authorize, updateSarEntry);
+router.post('/submitsar/:id', authorize, submitSar);
+router.delete('/deletesar/:id', authorize, checkRole, deleteSAR);
 
 module.exports = router;

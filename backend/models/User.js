@@ -36,7 +36,7 @@ const userSchema = new Schema(
 				message: 'Email is not valid',
 			},
 		},
-		userId: {
+		userID: {
 			type: Number,
 			required: [true, 'User ID is required'],
 			unique: true,
@@ -44,8 +44,8 @@ const userSchema = new Schema(
 			minlength: [5, 'User ID must be at least 5 characters'],
 			maxlength: [50, 'User ID must be less than 50 characters'],
 			validate: {
-				validator: function (userId) {
-					return /^[0-9]+$/.test(userId);
+				validator: function (userID) {
+					return /^[0-9]+$/.test(userID);
 				},
 				message: 'User ID is not valid',
 			},
@@ -58,7 +58,6 @@ const userSchema = new Schema(
 		},
 		role: {
 			type: String,
-			required: [true, 'Role is required'],
 			enum: roles,
 			default: 'user',
 		},
@@ -89,9 +88,9 @@ userSchema.methods.matchPassword = async function (password) {
 };
 
 userSchema.methods.getSignedJWT = function () {
-	const privateKey = process.env.JWT_SECRET;
-	const expiresIn = process.env.JWT_EXPIRE;
-	return jwt.sign({ id: this._id }, privateKey, { expiresIn: expiresIn });
+	const secret = process.env.JWT_SECRET;
+	const expire = process.env.JWT_EXPIRE;
+	return jwt.sign({ id: this._id }, secret, { expiresIn: expire });
 };
 
 userSchema.methods.getResetToken = function () {

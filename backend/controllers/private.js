@@ -1,7 +1,6 @@
 const SAR = require('../models/SAR/SAR');
 const ErrorResponse = require('../utils/errorRes');
 const ObjectId = require('mongodb').ObjectId;
-const sendToken = require('../utils/sendToken');
 
 exports.getPrivateData = (req, res, next) => {
 	res.status(200).json({ success: true, data: 'This is private data' });
@@ -9,7 +8,7 @@ exports.getPrivateData = (req, res, next) => {
 
 exports.getSAR = async (req, res, next) => {
 	try {
-		let sar = await SAR.findById(req.params.sarId);
+		let sar = await SAR.findById(req.params.id);
 		sar
 			? res.status(200).json({ success: true, sar })
 			: next(new ErrorResponse(`Document not found`, 404));
@@ -19,22 +18,25 @@ exports.getSAR = async (req, res, next) => {
 };
 
 exports.findAllSARs = async (req, res, next) => {
-	const { userId, date } = req.body;
+	const { userID, date } = req.body;
 	let role = res.locals.role;
 
 	if (role.toLowerCase() === 'user') {
 		try {
-			let sar = await SAR.find({ userId: res.locals.user.userId });
+			let sar = await SAR.find({ userID: res.locals.user.userID });
 			sar
 				? res.status(200).json({ success: true, sar })
 				: next(new ErrorResponse(`SAR not found`, 404));
 		} catch (err) {
 			return next(new ErrorResponse(`${err.message}`, 400));
 		}
-	} else if (role.toLowerCase() === 'admin' || role.toLowerCase() === 'manager') {
+	} else if (
+		role.toLowerCase() === 'admin' ||
+		role.toLowerCase() === 'manager'
+	) {
 		try {
 			let sars = await SAR.find({
-				...(userId ? { userId: userId } : {}),
+				...(userID ? { userID: userID } : {}),
 				...(date ? { date: date } : {}),
 			});
 			sars.length === 0
@@ -47,35 +49,46 @@ exports.findAllSARs = async (req, res, next) => {
 };
 
 exports.newSAR = async (req, res, next) => {
+	const { position, hours } = req.body;
+	let name = `${res.locals.user.first} ${res.locals.user.last}`;
+	let userID = res.locals.user.userID;
+	let location = res.locals.user.location;
+
 	try {
-		new SAR(req.body);
-		res.status(200).json({ success: true, sar });
+		let sar = await SAR.create({
+			name,
+			position,
+			hours,
+			userID,
+			location,
+		});
+		res.status(201).json({ success: true, sar });
 	} catch (err) {
-		return next(new ErrorResponse(`${err.message}`, 400));
+		next(new ErrorResponse(err.message, 400));
 	}
 };
 
 exports.newSarEntry = async (req, res, next) => {
-	let { sarId } = req.params;
+	let { id } = req.params;
 	let { entry, time, entryId } = req.body;
 	const day = new Date();
 	time = day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
 
 	try {
-		let sar = await SAR.findById({ _id: sarId });
+		let sar = await SAR.findById({ _id: id });
 
 		if (!sar) return next(new ErrorResponse(`SAR not found`, 404));
 
 		if (sar.status.toLowerCase() === 'submitted')
 			return next(new ErrorResponse(`SAR already submitted`, 400));
 
-		if (sar.userId !== res.locals.user.userId)
+		if (sar.userID !== res.locals.user.userID)
 			return next(new ErrorResponse(`Unauthorized`, 401));
 
 		sar.entries.push({
 			entry,
 			time,
-			entryId,
+			entryId: new ObjectId(),
 		});
 		await sar.save();
 		res.status(200).json({ success: true, sar });
@@ -125,16 +138,28 @@ exports.updateSarEntry = async (req, res, next) => {
 };
 
 exports.submitSar = async (req, res, next) => {
-	let { sarId } = req.params;
-	userId = res.locals.user._id;
-	sarId = req.params.sarId;
+	let { id } = req.params;
+	userID = res.locals.user._id;
+	id = req.params.id;
 
 	try {
-		let sar = await SAR.findById(req.params.sarId);
+		let sar = await SAR.findById(req.params.id);
 		if (!sar) return next(new ErrorResponse(`SAR not found`, 404));
 		sar.status = 'Submitted';
 		await sar.save();
 		res.status(200).json({ success: true, sar });
+	} catch (err) {
+		return next(new ErrorResponse(err, 400));
+	}
+};
+
+exports.deleteSAR = async (req, res, next) => {
+	let { id } = req.params;
+
+	try {
+		let sar = await SAR.findByIdAndDelete(id);
+		if (!sar) return next(new ErrorResponse(`SAR not found`, 404));
+		res.status(200).json({ success: true, message: 'SAR deleted' });
 	} catch (err) {
 		return next(new ErrorResponse(err, 400));
 	}

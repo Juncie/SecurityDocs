@@ -3,35 +3,50 @@ const User = require('../models/User');
 const ErrorResponse = require('../utils/errorRes');
 const sendEmail = require('../utils/sendEmail');
 const sendToken = require('../utils/sendToken');
-//if sendtoken isn't working, return function to bottom of this sheet.
 
 exports.getUser = async (req, res, next) => {
+	const filter = res.locals.user._id;
+	const user = await User.findById(filter);
+	const message = `User ${user.first} ${user.last} has been found!`;
 	try {
-		const user = await User.findById(res.locals.user.id);
-		sendToken({
-			user,
-			statusCode: 200,
-			res,
-			message: 'User Successfully Retrieved!',
-		});
+		sendToken(user, 200, res, message);
 	} catch (err) {
 		next(new ErrorResponse(`Error fetching user: ${err}`, 500));
 	}
 };
 
-exports.register = async (req, res, next) => {
-	const { first, last, email, userId, role, location, password } = req.body;
+exports.allUsers = async (req, res, next) => {
+	const { userID, location, role } = req.body;
+
 	try {
-		const user = await User.create({
-			first,
-			last,
-			email,
-			userId,
-			role,
-			location,
-			password,
+		let users = await User.find({
+			...(userID ? { userID } : {}),
+			...(location ? { location } : {}),
+			...(role ? { role } : {}),
 		});
-		sendToken(user, 201, res, 'User Successfully Created!');
+		users.length === 0
+			? res.status(404).json({ success: false, message: 'No users found' })
+			: res.status(200).json({ success: true, users });
+	} catch (err) {
+		next(new ErrorResponse(err.message, 400));
+	}
+};
+
+exports.deleteUser = async (req, res, next) => {
+	const { id } = req.params;
+
+	try {
+		await User.findByIdAndDelete(id);
+		res.status(200).json({ success: true, message: 'User has been deleted' });
+	} catch (err) {
+		next(new ErrorResponse(`Error deleting user: ${err}`, 500));
+	}
+};
+
+exports.register = async (req, res, next) => {
+	try {
+		let user = await User.create(req.body);
+		res.status(201).json({ success: true, user });
 		console.log(`User has been registered!`, user);
 	} catch (error) {
 		console.log(`error`, { error });
@@ -40,13 +55,13 @@ exports.register = async (req, res, next) => {
 };
 
 exports.login = async (req, res, next) => {
-	const { userId, password } = req.body;
+	const { userID, password } = req.body;
 
-	if (!userId || !password) {
+	if (!userID || !password) {
 		return next(new ErrorResponse('Please provide a User ID & Password', 400));
 	}
 	try {
-		const user = await User.findOne({ userId }).select('+password');
+		const user = await User.findOne({ userID }).select('+password');
 
 		if (!user) {
 			return next(new ErrorResponse('Invalid User', 400));

@@ -1,22 +1,18 @@
-const express = require('express');
-const { Schema, model, connections } = require('mongoose');
-
-// let user = res.locals.user;
+const { Schema, model } = require('mongoose');
 
 const sarSchema = new Schema(
 	{
 		status: {
 			type: String,
 			default: 'active',
-			enum: ['active', 'Active', 'submitted', 'Submitted'],
+			enum: ['active', 'submitted', 'Submitted', 'closed'],
 		},
-		// name: `${user.first} ${user.last}`,
+		name: { type: String, required: [true, 'Name is required'] },
 		date: { type: Date, default: Date.now() },
 		position: String,
-		radio: String,
-		vehicle: String,
+		hours: Number,
 		entries: { type: Array, default: [] },
-		// userId: user.userId,
+		userID: { type: Number, required: [true, 'userID is required'] },
 	},
 	{ timestamps: true }
 );

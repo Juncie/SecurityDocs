@@ -4,7 +4,7 @@ const validStatus = ['active', 'Active', 'submitted', 'Submitted'];
 
 const phoneSchema = new Schema(
 	{
-		userId: { type: Number, required: [true, 'User ID is required'] },
+		userID: { type: Number, required: [true, 'User ID is required'] },
 		name: { type: String, required: [true, 'Name is required'] },
 		date: { type: Date, default: Date.now() },
 		status: { type: String, default: 'active', enum: validStatus },
