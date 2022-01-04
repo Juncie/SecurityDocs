@@ -11,16 +11,9 @@ import Container from './custom/CustomContainer';
 import LoadView from './custom/CustomLoader';
 
 const Login = () => {
-	const {
-		setUser,
-		error,
-		setError,
-		loading,
-		setLoading,
-		setAuthToken,
-		getUser,
-	} = useAuth();
-	const [userId, setUserId] = useState('');
+	const { setUser, error, setError, loading, setLoading, setAuthToken, getUser } =
+		useAuth();
+	const [userID, setuserID] = useState('');
 	const [password, setPassword] = useState('');
 	const [loginError, setLoginError] = useState('');
 	const [isHidden, setIsHidden] = useState(true);
@@ -37,17 +30,16 @@ const Login = () => {
 	const handleLogin = async () => {
 		setLoading(true);
 
-		if (userId < 5 || password < 5) {
+		if (userID < 5 || password < 5) {
 			setLoading(false);
 			setLoginError('Please enter a valid user id and password');
-			return;
 		}
-		let res = await actions.login(userId, password);
+		let res = await actions.login(userID, password);
 		try {
 			if (res.success) {
 				setLoading(false);
-				setUserId('');
-				setPassword('');
+				// setuserID('');
+				// setPassword('');
 				getUser();
 			}
 		} catch (err) {
@@ -67,11 +59,7 @@ const Login = () => {
 		<Container style={styles.loginContainer}>
 			<Text style={styles.errorMessage}>{error && <Text>{error}</Text>}</Text>
 			<View style={styles.inputSection}>
-				<CustomInput
-					placeholder='User ID'
-					value={userId}
-					setValue={setUserId}
-				/>
+				<CustomInput placeholder='User ID' value={userID} setValue={setuserID} />
 				<CustomInput
 					placeholder='Password'
 					value={password}

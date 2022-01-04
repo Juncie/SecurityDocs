@@ -3,12 +3,12 @@ import userEvent from '@testing-library/user-event';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 
-// console.log(process.env);
+console.log(process.env);
 
 const serverUrl =
 	process.env.NODE_ENV === 'production' ? '' : `http://localhost:5000/api`;
 
-// console.log(serverUrl);
+console.log(serverUrl);
 
 const createHeaders = () => {
 	return {
@@ -17,24 +17,23 @@ const createHeaders = () => {
 };
 
 export default actions = {
-	getUser: async () =>
-		await axios.get(`${serverUrl}/auth/getuser`, createHeaders()),
-	register: async profile =>
-		await axios.post(`${serverUrl}/auth/register`, profile),
-	login: async (userId, password) => {
-		const { data } = await axios.post(`${serverUrl}/auth/login`, {
-			userId,
-			password,
-		});
+	getUser: async () => await axios.get(`${serverUrl}/auth/getuser`, createHeaders()),
+	register: async profile => await axios.post(`${serverUrl}/auth/register`, profile),
+	login: async (userID, password) => {
 		try {
+			const { data } = await axios.post(`${serverUrl}/auth/login`, {
+				userID,
+				password,
+			});
 			if (data) {
 				let token = data.token;
 				let user = data.user;
 				await AsyncStorage.setItem('token', token);
 				await AsyncStorage.setItem('user', JSON.stringify(user));
+				return data;
 			}
 		} catch (e) {
-			console.log(e.message);
+			console.log(e);
 		}
 		return data;
 	},

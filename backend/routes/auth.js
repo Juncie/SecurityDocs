@@ -13,7 +13,9 @@ const {
 	allUsers,
 } = require('../controllers/auth.js');
 
-router.get('/register');
+router.get('/', (req, res) => {
+	res.send('Welcome to the Auth Route');
+});
 router.get('/getuser', authorize, getUser);
 router.post('/users', authorize, checkRole, allUsers);
 router.delete('/deleteuser/:id', authorize, checkRole, deleteUser);
