@@ -56,7 +56,6 @@ exports.register = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
 	const { userID, password } = req.body;
-	console.log(`userID`, userID);
 
 	if (!userID || !password) {
 		return next(new ErrorResponse('Please provide a User ID & Password', 400));

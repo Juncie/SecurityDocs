@@ -6,7 +6,7 @@ import AuthStack from './AuthStack';
 import HomeStack from './HomeStack';
 
 const AppStack = ({ navigation }) => {
-	const { user, authToken } = useAuth();
+	const { authToken } = useAuth();
 	return (
 		<NavigationContainer>
 			{!authToken ? <AuthStack /> : <HomeStack />}

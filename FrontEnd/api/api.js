@@ -3,12 +3,12 @@ import userEvent from '@testing-library/user-event';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect } from 'react';
 
-console.log(process.env);
+const PORT = 8080;
 
 const serverUrl =
-	process.env.NODE_ENV === 'production' ? '' : `http://localhost:5000/api`;
+	process.env.NODE_ENV === 'production' ? '' : `http://localhost:${PORT}/api`;
 
-console.log(serverUrl);
+console.log('serverURL', serverUrl);
 
 const createHeaders = () => {
 	return {

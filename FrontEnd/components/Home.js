@@ -1,16 +1,27 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import useAuth from '../context/useAuth';
 import CustomButton from './custom/CustomButton';
 import Container from './custom/CustomContainer';
+import { useNavigation } from '@react-navigation/native';
 
 const Home = () => {
 	const { user, logout } = useAuth();
+	const navigation = useNavigation();
 	return (
 		<Container style={styles.container}>
 			<Text style={styles.text}>
 				{user?.first} <Text>{user?.last}</Text>
 			</Text>
+			<View>
+				<TouchableOpacity
+					onPress={() => navigation.navigate('DailyReport')}
+					style={styles.option}
+				>
+					<Text style={styles.optionText}>Forms</Text>
+				</TouchableOpacity>
+			</View>
 			<CustomButton text='Logout' onPress={logout} />
 		</Container>
 	);
@@ -22,9 +33,23 @@ const styles = StyleSheet.create({
 	container: {
 		width: '100%',
 		height: '100%',
-		justifyContent: 'center',
 	},
 	text: {
 		textAlign: 'center',
+		fontWeight: 'bold',
+		fontSize: 20,
+		marginBottom: 30,
+		marginTop: 10,
+	},
+	option: {
+		marginHorizontal: '10%',
+		width: '35%',
+		height: '60%',
+		backgroundColor: 'gray',
+	},
+	optionText: {
+		textAlign: 'center',
+		fontSize: 20,
+		color: 'white',
 	},
 });
