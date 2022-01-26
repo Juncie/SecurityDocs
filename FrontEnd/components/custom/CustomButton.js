@@ -1,14 +1,14 @@
 import React from 'react';
 import { Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { GlobalStyles } from '../../styles/GlobalStyles';
+import {
+	primary,
+	secondary,
+	tertiary,
+	white,
+	black,
+} from '../../styles/GlobalStyles';
 
-const CustomButton = ({
-	text,
-	onPress,
-	type = 'PRIMARY',
-	bgColor,
-	fgColor,
-}) => {
+const CustomButton = ({ text, onPress, type = 'PRIMARY', bgColor, fgColor }) => {
 	return (
 		<TouchableOpacity
 			onPress={onPress}
@@ -43,11 +43,11 @@ const styles = StyleSheet.create({
 		alignSelf: 'center',
 	},
 	container_PRIMARY: {
-		backgroundColor: GlobalStyles.primary,
+		backgroundColor: primary,
 	},
 
 	container_SECONDARY: {
-		borderColor: GlobalStyles.primary,
+		borderColor: secondary,
 		borderWidth: 2,
 		borderRadius: 5,
 		textAlign: 'center',
@@ -61,12 +61,12 @@ const styles = StyleSheet.create({
 		textAlign: 'center',
 	},
 	text_PRIMARY: {
-		color: GlobalStyles.white,
+		color: white,
 	},
 	text_SECONDARY: {
-		color: GlobalStyles.black,
+		color: black,
 	},
 	text_TERTIARY: {
-		color: GlobalStyles.tertiary,
+		color: tertiary,
 	},
 });

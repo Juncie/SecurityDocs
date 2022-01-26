@@ -5,3 +5,5 @@ export const GlobalStyles = {
 	white: '#FFFFFF',
 	black: '#111111',
 };
+
+export const { primary, secondary, tertiary, white, black } = GlobalStyles;

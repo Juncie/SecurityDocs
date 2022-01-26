@@ -1,39 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Modal, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-import Container from '../custom/CustomContainer';
-import Equipment from './Equipment';
-import SAR from './SAR';
-import Vehicle from './Vehicle';
 import CustomButton from '../custom/CustomButton';
+import CustomModal from '../custom/CustomModal';
+import Equipment from './Equipment';
 
-export default DailyReport = () => {};
+export default DailyReport = () => {
+	const [show, setShow] = useState(false);
+	const handleClose = () => setShow(false);
+
+	const navigation = useNavigation();
+	const goToEquipment = () =>
+		navigation.navigate('DailyReport', { screen: 'Equipment' });
+
+	return (
+		<View>
+			<CustomModal
+				visible={show}
+				onRequestClose={handleClose}
+				title='Daily Report'
+				animationType='slide'
+			>
+				<Equipment />
+			</CustomModal>
+			<CustomButton text='Show Modal' onPress={goToEquipment} />
+		</View>
+	);
+};
 
 const styles = StyleSheet.create({
-	container: {
-		alignItems: 'center',
-	},
-	modalContainer: {
-		flex: 1,
-		backgroundColor: '#fff',
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	centeredView: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-		marginTop: 22,
-	},
+	modalContainer: {},
 });
-
-const {
-	container,
-	modalContainer,
-	modalTitle,
-	modalBody,
-	modalHeader,
-	centeredView,
-	modalTitleText,
-	modalButtonContainer,
-} = styles;

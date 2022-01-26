@@ -16,13 +16,13 @@ const Home = () => {
 			</Text>
 			<View>
 				<TouchableOpacity
-					onPress={() => navigation.navigate('DailyReport')}
+					onPress={() => navigation.navigate('Daily Report')}
 					style={styles.option}
 				>
 					<Text style={styles.optionText}>Forms</Text>
 				</TouchableOpacity>
 			</View>
-			<CustomButton text='Logout' onPress={logout} />
+			<CustomButton text='Logout' onPress={logout} type='TERITARY' />
 		</Container>
 	);
 };

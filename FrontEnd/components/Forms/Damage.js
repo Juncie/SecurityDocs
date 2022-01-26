@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import CustomButton from '../custom/CustomButton';
 
-export default Damage = () => {
-	const [damage, setDamage] = useState({});
+const Damage = () => {
+	const [damages, setDamages] = useState({});
 
 	//get request to get damage
 
@@ -13,19 +13,6 @@ export default Damage = () => {
 	return (
 		<View>
 			<Text style={textHeader}>Is there new damage to the vehicle?</Text>
-			<CustomButton
-				title='Yes'
-				onPress={() => {
-					setDamage(true);
-				}}
-			/>
-			<CustomButton
-				title='No'
-				type='secondary'
-				onPress={() => {
-					setDamage(false);
-				}}
-			/>
 		</View>
 	);
 };
@@ -38,4 +25,6 @@ const styles = StyleSheet.create({
 	},
 });
 
-let { textHeader } = styles;
+const { textHeader } = styles;
+
+export default Damage;

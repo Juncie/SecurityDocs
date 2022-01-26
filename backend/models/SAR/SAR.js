@@ -5,8 +5,9 @@ const sarSchema = new Schema(
 		status: {
 			type: String,
 			default: 'active',
-			enum: ['active', 'submitted', 'Submitted', 'closed'],
+			enum: ['active', 'submitted', 'closed'],
 		},
+
 		name: { type: String, required: [true, 'Name is required'] },
 		date: { type: Date, default: Date.now() },
 		position: String,

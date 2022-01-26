@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 import React from 'react';
 
-const SAR = () => {
+const Issue = () => {
 	return (
 		<View>
-			<Text>SAR</Text>
+			<Text>Issue</Text>
 		</View>
 	);
 };
 
-export default SAR;
+export default Issue;
