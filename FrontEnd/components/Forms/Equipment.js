@@ -3,76 +3,103 @@ import { View, Text, StyleSheet, Button, Modal, Switch } from 'react-native';
 import CustomButton from '../custom/CustomButton';
 
 import Container from '../custom/CustomContainer';
+import {useNavigation} from '@react-navigation/native';
 
 export default Equipment = () => {
 	const [equipment, setEquipment] = useState({});
 
 	const [phone, setPhone] = useState(false);
 	const [showPhone, setShowPhone] = useState(false);
-	const [keys, setKeys] = useState(false);
-	const [showkeys, setShowKeys] = useState(false);
+
 	const [radio, setRadio] = useState(false);
+	const [showRadio, setShowRadio] = useState(false);
 
-	return (
-		<Container>
-			<Text style={tabTitle}>Equipment</Text>
-			<View style={formContainer}>
-				<View style={options}>
-					<Text>Phone</Text>
-					<Switch value={phone} onValueChange={() => setShowPhone(!showPhone)} />
-				</View>
-				{showPhone && (
-					<Modal style={modalContainer}>
-						<CustomButton
-							text='Close Modal'
-							onPress={() => setShowPhone(false)}
-							type='SECONDARY'
-						/>
-					</Modal>
-				)}
+	const [keys, setKeys] = useState(false);
+	const [showKeys, setShowKeys] = useState(false);
 
-				<View>
-					<Text>Keys</Text>
-				</View>
+	const [flashlight, setFlashlight] = useState(false);
+	const [showFlashlight, setShowFlashlight] = useState(false);
 
-				<View>
-					<Text>Radio</Text>
-				</View>
-				<View>
-					<Text>Flashlight</Text>
-				</View>
+	const [other, setOther] = useState(false);
+	const [showOther, setShowOther] = useState(false);
 
-				<View>
-					<Text>Other</Text>
-				</View>
+	const WittmannEquipment = [
+		{
+			name: 'Phone',
+			value: phone,
+			show: showPhone,
+			set: setShowPhone,
+			setValue: setPhone,
+		},
+		{
+			name: 'Radio',
+			value: radio,
+			show: showRadio,
+			set: setShowRadio,
+			setValue: setRadio,
+		},
+		{
+			name: 'Keys',
+			value: keys,
+			show: showKeys,
+			set: setShowKeys,
+			setValue: setKeys,
+		},
+		{
+			name: 'Flashlight',
+			value: flashlight,
+			show: showFlashlight,
+			set: setShowFlashlight,
+			setValue: setFlashlight,
+		},
+		{
+			name: 'Other',
+			value: other,
+			show: showOther,
+			set: setShowOther,
+			setValue: setOther,
+		},
+	];
+
+	//map through the array of objects and return the name and value
+	const WittmannEquipmentList = WittmannEquipment.map((item, index) => {
+		return (
+			<View key={index}>
+				<Text>{item.name}</Text>
+				<Switch
+					value={item.value}
+					trackColor={{ false: '#767577', true: '#81b0ff' }}
+					onValueChange={() => {
+						item.set(!item.show);
+					}}
+				/>
 			</View>
-		</Container>
-	);
+		);
+	});
+
+	return <Container style={formContainer}>
+		{WittmannEquipmentList}
+		<CustomButton title="Next" onPress={} />
+	</Container>;
 };
 
 const styles = StyleSheet.create({
-	modalContainer: {
-		alignItems: 'center',
-		flexDirection: 'column',
-		backgroundColor: 'grey',
-	},
-
 	tabTitle: {
 		fontSize: 20,
 		fontWeight: 'bold',
-		marginBottom: 10,
+		alignSelf: 'center',
 	},
-
 	formContainer: {
+		flex: 1,
 		flexDirection: 'column',
-		marginTop: 10,
+		justifyContent: 'space-evenly',
 	},
-
 	options: {
 		flexDirection: 'row',
-		marginBottom: 10,
+		justifyContent: 'space-evenly',
 		alignItems: 'center',
+		marginBottom: 10,
 	},
 });
 
-let { tabTitle, formContainer, modalContainer, options } = styles;
+const { tabTitle, formContainer, options } = styles;

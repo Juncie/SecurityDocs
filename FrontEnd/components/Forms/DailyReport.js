@@ -21,6 +21,7 @@ export default DailyReport = () => {
 				onRequestClose={handleClose}
 				title='Daily Report'
 				animationType='slide'
+				containerStyle={modalContainer}
 			>
 				<Equipment />
 			</CustomModal>
@@ -32,3 +33,5 @@ export default DailyReport = () => {
 const styles = StyleSheet.create({
 	modalContainer: {},
 });
+
+const { modalContainer } = styles;

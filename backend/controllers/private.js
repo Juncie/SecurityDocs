@@ -30,10 +30,7 @@ exports.findAllSARs = async (req, res, next) => {
 		} catch (err) {
 			return next(new ErrorResponse(`${err.message}`, 400));
 		}
-	} else if (
-		role.toLowerCase() === 'admin' ||
-		role.toLowerCase() === 'manager'
-	) {
+	} else if (role.toLowerCase() === 'admin' || role.toLowerCase() === 'manager') {
 		try {
 			let sars = await SAR.find({
 				...(userID ? { userID: userID } : {}),

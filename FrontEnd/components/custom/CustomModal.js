@@ -11,10 +11,6 @@ export default ModalPopup = ({
 	onDismiss,
 	containerStyle,
 }) => {
-	const handleClose = () => {
-		visible = false;
-	};
-
 	return (
 		<Modal
 			visible={visible}
@@ -23,12 +19,7 @@ export default ModalPopup = ({
 			transparent={transparent}
 			onDismiss={onDismiss}
 		>
-			<View style={[styles.modalContainer]}>
-				<View style={styles.formContainer || containerStyle}>{children}</View>
-				<View style={styles.ButtonContainer}>
-					<CustomButton text='Close' onPress={onRequestClose} type='PRIMARY' />
-				</View>
-			</View>
+			<View style={containerStyle}>{children}</View>
 		</Modal>
 	);
 };
@@ -37,10 +28,5 @@ const styles = StyleSheet.create({
 	modalContainer: {
 		flex: 1,
 		backgroundColor: '#7184aa',
-	},
-	ButtonContainer: {
-		flexDirection: 'column-reverse',
-		marginTop: -20,
-		height: '100%',
 	},
 });
