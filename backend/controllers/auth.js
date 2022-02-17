@@ -28,7 +28,7 @@ exports.allUsers = async (req, res, next) => {
 			? res.status(404).json({ success: false, message: 'No users found' })
 			: res.status(200).json({ success: true, users });
 	} catch (err) {
-		next(new ErrorResponse(err.message, 400));
+		next(new ErrorResponse('Error Getting Users:', err.message, 400));
 	}
 };
 
@@ -50,7 +50,12 @@ exports.register = async (req, res, next) => {
 		console.log(`User has been registered!`, user);
 	} catch (error) {
 		console.log(`error`, { error });
-		return next(new ErrorResponse(`${error.message}`, 500));
+		return next(
+			new ErrorResponse(
+				`There was a problem registering the user: ${error.message}`,
+				500
+			)
+		);
 	}
 };
 
@@ -74,7 +79,7 @@ exports.login = async (req, res, next) => {
 		}
 		sendToken(user, 200, res);
 	} catch (error) {
-		next(new ErrorResponse(`${error.message}`, 500));
+		next(new ErrorResponse(`Login Error: ${error.message}`, 500));
 	}
 };
 

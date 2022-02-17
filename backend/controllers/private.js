@@ -7,13 +7,14 @@ exports.getPrivateData = (req, res, next) => {
 };
 
 exports.getSAR = async (req, res, next) => {
+	let { id } = req.params;
 	try {
 		let sar = await SAR.findById(req.params.id);
 		sar
 			? res.status(200).json({ success: true, sar })
 			: next(new ErrorResponse(`Document not found`, 404));
 	} catch (err) {
-		return next(new ErrorResponse(`${err.message}`, 400));
+		return next(new ErrorResponse(`Could not Get SAR: ${err.message}`, 400));
 	}
 };
 
@@ -28,7 +29,7 @@ exports.findAllSARs = async (req, res, next) => {
 				? res.status(200).json({ success: true, sar })
 				: next(new ErrorResponse(`SAR not found`, 404));
 		} catch (err) {
-			return next(new ErrorResponse(`${err.message}`, 400));
+			return next(new ErrorResponse(`Error Getting User SAR: ${err.message}`, 400));
 		}
 	} else if (role.toLowerCase() === 'admin' || role.toLowerCase() === 'manager') {
 		try {
@@ -40,14 +41,14 @@ exports.findAllSARs = async (req, res, next) => {
 				? res.status(404).json({ success: false, message: 'No SARs found' })
 				: res.status(200).json({ success: true, sars });
 		} catch (err) {
-			next(new ErrorResponse(err.message, 400));
+			next(new ErrorResponse('Error Finding All SARs:', err.message, 400));
 		}
 	}
 };
 
 exports.newSAR = async (req, res, next) => {
 	const { position, hours } = req.body;
-	let name = `${res.locals.user.first} ${res.locals.user.last}`;
+	let name = `${res.locals.user.last}, ${res.locals.user.first}`;
 	let userID = res.locals.user.userID;
 	let location = res.locals.user.location;
 
@@ -61,15 +62,15 @@ exports.newSAR = async (req, res, next) => {
 		});
 		res.status(201).json({ success: true, sar });
 	} catch (err) {
-		next(new ErrorResponse(err.message, 400));
+		next(new ErrorResponse('New SAR Error:', err.message, 400));
 	}
 };
 
 exports.newSarEntry = async (req, res, next) => {
 	let { id } = req.params;
-	let { entry, time, entryId } = req.body;
+	let { entry, entryId } = req.body;
 	const day = new Date();
-	time = day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
+	let time = day.getHours() + ':' + day.getMinutes() + ':' + day.getSeconds();
 
 	try {
 		let sar = await SAR.findById({ _id: id });
@@ -90,7 +91,9 @@ exports.newSarEntry = async (req, res, next) => {
 		await sar.save();
 		res.status(200).json({ success: true, sar });
 	} catch (err) {
-		return next(new ErrorResponse(`${err.message}`, 400));
+		return next(
+			new ErrorResponse(`Error Creating New SAR Entry: ${err.message}`, 400)
+		);
 	}
 };
 
@@ -114,7 +117,7 @@ exports.updateSarEntry = async (req, res, next) => {
 			await sar.save();
 			res.status(200).json({ success: true, sar });
 		} catch (err) {
-			return next(new ErrorResponse(`${err.message}`, 400));
+			return next(new ErrorResponse(`Error with Entry Update: ${err.message}`, 400));
 		}
 	}
 
@@ -129,7 +132,9 @@ exports.updateSarEntry = async (req, res, next) => {
 			await sar.save();
 			res.status(200).json({ success: true, sar });
 		} catch (err) {
-			return next(new ErrorResponse(`${err.message}`, 400));
+			return next(
+				new ErrorResponse(`Error Updating SAR Entry: ${err.message}`, 400)
+			);
 		}
 	}
 };
@@ -137,16 +142,15 @@ exports.updateSarEntry = async (req, res, next) => {
 exports.submitSar = async (req, res, next) => {
 	let { id } = req.params;
 	userID = res.locals.user._id;
-	id = req.params.id;
 
 	try {
-		let sar = await SAR.findById(req.params.id);
+		let sar = await SAR.findById(id);
 		if (!sar) return next(new ErrorResponse(`SAR not found`, 404));
 		sar.status = 'Submitted';
 		await sar.save();
 		res.status(200).json({ success: true, sar });
 	} catch (err) {
-		return next(new ErrorResponse(err, 400));
+		return next(new ErrorResponse('Error Submitting SAR', err, 400));
 	}
 };
 
@@ -158,6 +162,6 @@ exports.deleteSAR = async (req, res, next) => {
 		if (!sar) return next(new ErrorResponse(`SAR not found`, 404));
 		res.status(200).json({ success: true, message: 'SAR deleted' });
 	} catch (err) {
-		return next(new ErrorResponse(err, 400));
+		return next(new ErrorResponse('Error deleting SAR:', err, 400));
 	}
 };

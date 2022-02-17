@@ -1,6 +1,5 @@
 import { View, Text, StyleSheet, Modal, useWindowDimensions } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import CustomButton from './CustomButton';
 
 export default ModalPopup = ({
 	visible,
@@ -18,6 +17,7 @@ export default ModalPopup = ({
 			animationType={animationType}
 			transparent={transparent}
 			onDismiss={onDismiss}
+			style={[styles.container, containerStyle]}
 		>
 			<View style={containerStyle}>{children}</View>
 		</Modal>

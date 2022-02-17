@@ -2,8 +2,8 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import useAuth from '../context/useAuth';
-import CustomButton from './custom/CustomButton';
-import Container from './custom/CustomContainer';
+import C_Button from './custom/C_Button';
+import Container from './custom/C_Container';
 import { useNavigation } from '@react-navigation/native';
 
 const Home = () => {
@@ -22,7 +22,7 @@ const Home = () => {
 					<Text style={styles.optionText}>Forms</Text>
 				</TouchableOpacity>
 			</View>
-			<CustomButton text='Logout' onPress={logout} type='TERITARY' />
+			<C_Button text='Logout' onPress={logout} type='TERITARY' />
 		</Container>
 	);
 };

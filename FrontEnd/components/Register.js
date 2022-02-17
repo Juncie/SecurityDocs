@@ -13,11 +13,10 @@ import {
 } from 'react-native';
 import * as yup from 'yup';
 import useAuth from '../context/useAuth';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import Container from './custom/CustomContainer';
-import CustomButton from './custom/CustomButton';
-import LoadView from './custom/CustomLoader';
+import Container from './custom/C_Container';
+import C_Button from './custom/C_Button';
+import LoadView from './custom/C_Loader';
 
 const Register = () => {
 	const { error, setError, loading, setLoading } = useAuth();
@@ -47,10 +46,7 @@ const Register = () => {
 			.string()
 			.min(2, 'Last name is too short')
 			.required('Last name is required'),
-		email: yup
-			.string()
-			.email('Email is not a valid.')
-			.required('Email is required'),
+		email: yup.string().email('Email is not a valid.').required('Email is required'),
 		confirmEmail: yup
 			.string()
 			.required('Please confirm your email address.')
@@ -228,12 +224,8 @@ const Register = () => {
 							<Text style={styles.errorMsg}>
 								{showErr && <Text>{errors?.confirmPassword}</Text>}
 							</Text>
-							<CustomButton text='Register User' onPress={handleSubmit} />
-							<CustomButton
-								text='Back to Login'
-								onPress={goToLogin}
-								type='SECONDARY'
-							/>
+							<C_Button text='Register User' onPress={handleSubmit} />
+							<C_Button text='Back to Login' onPress={goToLogin} type='SECONDARY' />
 						</View>
 					)}
 				</Formik>

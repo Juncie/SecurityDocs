@@ -5,10 +5,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import actions from '../api/api';
 import useAuth from '../context/useAuth';
-import CustomInput from './custom/CustomInput';
-import CustomButton from './custom/CustomButton';
-import Container from './custom/CustomContainer';
-import LoadView from './custom/CustomLoader';
+import C_Input from './custom/C_Input';
+import C_Button from './custom/C_Button';
+import Container from './custom/C_Container';
+import LoadView from './custom/C_Loader';
 
 const Login = () => {
 	const { setUser, error, setError, loading, setLoading, setAuthToken, getUser } =
@@ -59,16 +59,16 @@ const Login = () => {
 		<Container style={styles.loginContainer}>
 			<Text style={styles.errorMessage}>{error && <Text>{error}</Text>}</Text>
 			<View style={styles.inputSection}>
-				<CustomInput placeholder='User ID' value={userID} setValue={setuserID} />
-				<CustomInput
+				<C_Input placeholder='User ID' value={userID} setValue={setuserID} />
+				<C_Input
 					placeholder='Password'
 					value={password}
 					setValue={setPassword}
 					secureTextEntry={isHidden}
 				/>
-				<CustomButton text='Login' onPress={handleLogin} type='SECONDARY' />
-				<CustomButton text='Forgot Password' type='TERTIARY' />
-				<CustomButton onPress={() => navigation.navigate('Register')} />
+				<C_Button text='Login' onPress={handleLogin} type='SECONDARY' />
+				<C_Button text='Forgot Password' type='TERTIARY' />
+				<C_Button text='Register' onPress={() => navigation.navigate('Register')} />
 			</View>
 		</Container>
 	);

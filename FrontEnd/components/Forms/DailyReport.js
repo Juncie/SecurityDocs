@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import CustomButton from '../custom/CustomButton';
-import CustomModal from '../custom/CustomModal';
+import C_Button from '../custom/C_Button';
+import C_Modal from '../custom/C_Modal';
 import Equipment from './Equipment';
 
 export default DailyReport = () => {
@@ -16,7 +16,7 @@ export default DailyReport = () => {
 
 	return (
 		<View>
-			<CustomModal
+			<C_Modal
 				visible={show}
 				onRequestClose={handleClose}
 				title='Daily Report'
@@ -24,8 +24,8 @@ export default DailyReport = () => {
 				containerStyle={modalContainer}
 			>
 				<Equipment />
-			</CustomModal>
-			<CustomButton text='Show Modal' onPress={goToEquipment} />
+			</C_Modal>
+			<C_Button text='Show Modal' onPress={goToEquipment} />
 		</View>
 	);
 };

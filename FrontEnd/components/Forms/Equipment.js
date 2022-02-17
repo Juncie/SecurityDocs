@@ -8,10 +8,10 @@ import {
 	Switch,
 	TextInput,
 } from 'react-native';
-import CustomButton from '../custom/CustomButton';
+import C_Button from '../custom/C_Button';
 
-import Container from '../custom/CustomContainer';
-import Input from '../custom/CustomInput';
+import Container from '../custom/C_Container';
+import Input from '../custom/C_Input';
 import { useNavigation } from '@react-navigation/native';
 
 export default Equipment = () => {
@@ -131,7 +131,7 @@ export default Equipment = () => {
 					</View>
 				)}
 			</View>
-			<CustomButton
+			<C_Button
 				text='Next'
 				onPress={() => navigation.navigate('Daily Report', { screen: 'Damage' })}
 			/>

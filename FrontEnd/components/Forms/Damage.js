@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TextInput, Button } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import CustomButton from '../custom/CustomButton';
-import Container from '../custom/CustomContainer';
+import C_Button from '../custom/C_Button';
+import Container from '../custom/C_Container';
 
 const DamageReport = () => {
 	const navigation = useNavigation();
@@ -18,9 +18,9 @@ const DamageReport = () => {
 		<Container>
 			<Text style={textHeader}>Is there new damage to the vehicle?</Text>
 			<View style={formRow}>
-				<CustomButton text='Yes' onPress={() => setOpen(!open)} />
+				<C_Button text='Yes' onPress={() => setOpen(!open)} />
 
-				<CustomButton
+				<C_Button
 					text='No'
 					onPress={() => navigation.navigate('Daily Report', { screen: 'Vehicle' })}
 				/>
